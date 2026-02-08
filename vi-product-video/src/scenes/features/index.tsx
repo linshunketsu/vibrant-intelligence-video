@@ -14,6 +14,7 @@
 
 import React from "react";
 import { FeatureScene } from "../FeatureScene";
+import { FeatureSceneWithCinematicZoom } from "../../components/FeatureSceneWithCinematicZoom";
 
 // Import all screenshots
 import chatInbox from "../../assets/screenshots/chat-multichannel-inbox.png";
@@ -74,12 +75,13 @@ export const ChatMultichannelFeature: React.FC = () => (
 /**
  * FEATURE 2: Health Tab (12s = 360 frames)
  * Layout: carousel (~4s per slide)
- * Screenshots: 2 (note: health-tab-scroll.png doesn't exist, using 2)
+ * Screenshots: 2
  * Subtitle: "Instant Clinical Context"
  * Cursor: YES — animate cursor clicking the "Health" tab on first screenshot
+ * Cinematic Zoom: YES — zoom into the health variables panel on second screenshot
  */
 export const HealthTabFeature: React.FC = () => (
-  <FeatureScene
+  <FeatureSceneWithCinematicZoom
     featureNumber={2}
     title="Health Tab"
     subtitle="Instant Clinical Context"
@@ -87,11 +89,20 @@ export const HealthTabFeature: React.FC = () => (
     layout="carousel"
     durationInFrames={360}
     showCursor={{
-      startPos: { x: 85, y: 15 }, // Near the Health tab
-      endPos: { x: 85, y: 15 },
-      startFrame: 30,
-      moveDuration: 20,
-      clickAtFrame: 50,
+      startPos: { x: 50, y: 56 }, // At the zoom target (center of health variables)
+      endPos: { x: 50, y: 56 },    // Stay there
+      startFrame: 140,             // Start just before zoom
+      moveDuration: 10,            // Quick move into position
+      clickAtFrame: 160,           // Click during zoom to show interaction
+    }}
+    highlightZoom={{
+      x: 50,              // Center
+      y: 56,              // Slightly below center
+      scale: 2.5,          // Higher zoom level
+      preset: "subtle",
+      atFrame: 150,       // Start zoom when second screenshot appears (~5s)
+      holdDuration: 120,  // Hold for 4 seconds
+      showRing: false,    // Hide the ring, use cursor instead for human-like interaction
     }}
   />
 );
@@ -133,12 +144,13 @@ export const PegBoardFeature: React.FC = () => (
 /**
  * FEATURE 5: Quick Actions (10s = 300 frames)
  * Layout: crossfade
- * Screenshots: 2 (note: quick-actions-context.png doesn't exist)
+ * Screenshots: 2
  * Subtitle: "One-Click Clinical Actions"
  * Cursor: YES — animate cursor clicking a quick action button
+ * Cinematic Zoom: YES — zoom into the 4 action items (Encounter Notes, eRx, etc.)
  */
 export const QuickActionsFeature: React.FC = () => (
-  <FeatureScene
+  <FeatureSceneWithCinematicZoom
     featureNumber={5}
     title="Quick Actions"
     subtitle="One-Click Clinical Actions"
@@ -146,19 +158,26 @@ export const QuickActionsFeature: React.FC = () => (
     layout="crossfade"
     durationInFrames={300}
     showCursor={{
-      startPos: { x: 20, y: 50 }, // Start from left
-      endPos: { x: 25, y: 50 }, // Move to a quick action button
+      startPos: { x: 20, y: 50 },
+      endPos: { x: 30, y: 45 },
       startFrame: 40,
       moveDuration: 15,
       clickAtFrame: 55,
+    }}
+    highlightZoom={{
+      x: 20,              // Left side where the action icons are
+      y: 95,              // Bottom area above the chat input bar
+      preset: "snappy",   // Quick, energetic zoom
+      atFrame: 90,        // Start zoom at 3s
+      holdDuration: 20,   // Hold for 0.67 seconds (total zoom ends by frame 137, before crossfade at 150)
     }}
   />
 );
 
 /**
  * FEATURE 6: Encounter Notes (25s = 750 frames)
- * Layout: carousel with side peeks (~5s per slide) — Manus Scene 9 style
- * Screenshots: 4 (note: encounter-action-cards.png doesn't exist)
+ * Layout: carousel with side peeks (~5s per slide)
+ * Screenshots: 4
  * Subtitle: "AI-Powered Documentation"
  */
 export const EncounterNotesFeature: React.FC = () => (
@@ -177,15 +196,24 @@ export const EncounterNotesFeature: React.FC = () => (
  * Layout: carousel with side peeks (~6s per slide)
  * Screenshots: 5
  * Subtitle: "Intelligent Care Pathways"
+ * Cinematic Zoom: YES — zoom into the user and AI conversation panel on the right
  */
 export const WorkflowAIFeature: React.FC = () => (
-  <FeatureScene
+  <FeatureSceneWithCinematicZoom
     featureNumber={7}
     title="Workflow + AI"
     subtitle="Intelligent Care Pathways"
     screenshots={[workflowOverview, workflowNodes, workflowCompose, workflowGenerated, workflowGuardian]}
     layout="carousel"
     durationInFrames={900}
+    highlightZoom={{
+      x: 96,              // Far right where the user/AI conversation panel is
+      y: 50,              // Middle of the conversation
+      scale: 2.2,         // Moderate zoom level
+      preset: "dramatic", // Strong zoom to emphasize AI integration
+      atFrame: 200,       // Start zoom early (~6.7s)
+      holdDuration: 180,  // Hold for 6 seconds
+    }}
   />
 );
 
@@ -205,8 +233,8 @@ export const FormBuilderFeature: React.FC = () => (
     layout="carousel"
     durationInFrames={600}
     showCursor={{
-      startPos: { x: 50, y: 80 }, // Start from center bottom
-      endPos: { x: 60, y: 60 }, // Move to AI prompt field
+      startPos: { x: 50, y: 80 },
+      endPos: { x: 60, y: 60 },
       startFrame: 50,
       moveDuration: 20,
       clickAtFrame: 70,
@@ -219,15 +247,23 @@ export const FormBuilderFeature: React.FC = () => (
  * Layout: carousel (~6s per slide)
  * Screenshots: 3
  * Subtitle: "Your Command Center"
+ * Cinematic Zoom: YES — zoom into the sentiment analysis or Ask AI button
  */
 export const MyPracticeFeature: React.FC = () => (
-  <FeatureScene
+  <FeatureSceneWithCinematicZoom
     featureNumber={9}
     title="My Practice"
     subtitle="Your Command Center"
     screenshots={[practiceDashboard, practiceSentiment, practiceAskAi]}
     layout="carousel"
     durationInFrames={540}
+    highlightZoom={{
+      x: 30,              // Left side where the sentiment/analytics are
+      y: 40,              // Upper middle of the dashboard
+      preset: "subtle",
+      atFrame: 140,       // Start zoom on first screenshot (~4.7s)
+      holdDuration: 120,  // Hold for 4 seconds
+    }}
   />
 );
 
@@ -241,14 +277,22 @@ export const MyPracticeFeature: React.FC = () => (
  * Layout: single — FASTER entrance (10 frames) for rapid-fire energy
  * Screenshots: 1
  * Subtitle only, no feature number badge
+ * Cinematic Zoom: YES — zoom into the collaboration indicators
  */
 export const EncounterCollaborateFeature: React.FC = () => (
-  <FeatureScene
+  <FeatureSceneWithCinematicZoom
     title="Real-time Collaboration"
     subtitle="Work Together, Live"
     screenshots={[encounterCollaborate]}
     layout="single"
     durationInFrames={150}
+    highlightZoom={{
+      x: 80,              // Right side where collaboration avatars are
+      y: 15,              // Top right corner
+      preset: "snappy",   // Quick zoom for rapid-fire style
+      atFrame: 40,        // Start zoom early
+      holdDuration: 60,   // Hold for 2 seconds
+    }}
   />
 );
 
@@ -256,29 +300,45 @@ export const EncounterCollaborateFeature: React.FC = () => (
  * FEATURE 11: Encounter Note Sign (5s = 150 frames)
  * Layout: single — fast entrance, same rapid-fire style
  * Screenshots: 1
+ * Cinematic Zoom: YES — zoom into the signature area
  */
 export const EncounterSignFeature: React.FC = () => (
-  <FeatureScene
+  <FeatureSceneWithCinematicZoom
     title="Sign Anywhere"
     subtitle="E-Signatures Built In"
     screenshots={[encounterSign]}
     layout="single"
     durationInFrames={150}
+    highlightZoom={{
+      x: 50,              // Center where signature is
+      y: 70,              // Bottom where the signature line is
+      preset: "snappy",
+      atFrame: 40,
+      holdDuration: 60,
+    }}
   />
 );
 
 /**
  * FEATURE 12: Approval Center (5s = 150 frames)
- * Layout: single — fast entrance
- * Screenshots: 2 (crossfade)
+ * Layout: crossfade — fast entrance
+ * Screenshots: 2
+ * Cinematic Zoom: YES — zoom into the approval buttons
  */
 export const ApprovalCenterFeature: React.FC = () => (
-  <FeatureScene
+  <FeatureSceneWithCinematicZoom
     title="Approval Center"
     subtitle="Streamlined Reviews"
     screenshots={[approvalCenter, approvalDetail]}
     layout="crossfade"
     durationInFrames={150}
+    highlightZoom={{
+      x: 70,              // Right side where approve/reject buttons are
+      y: 60,              // Middle of the approval list
+      preset: "snappy",
+      atFrame: 50,
+      holdDuration: 60,
+    }}
   />
 );
 

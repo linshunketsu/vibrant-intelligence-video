@@ -1,5 +1,6 @@
 import React from "react";
-import { Composition, Sequence } from "remotion";
+import { Composition, Sequence, Audio } from "remotion";
+import soundtrack from "./assets/screenshots/demo music/m4.mp3";
 import { IntroScene } from "./scenes/IntroScene";
 import { FeatureScene } from "./scenes/FeatureScene";
 import { SectionTitleScene } from "./scenes/SectionTitleScene";
@@ -153,6 +154,9 @@ const SCREENSHOTS = {
 export const Video: React.FC = () => {
   return (
     <>
+      {/* Background soundtrack */}
+      <Audio src={soundtrack} volume={0.3} />
+
       {/* 0:00 - 0:15   INTRO (450 frames) */}
       <Sequence from={0} durationInFrames={450}>
         <IntroScene />
