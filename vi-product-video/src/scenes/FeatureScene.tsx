@@ -153,7 +153,7 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
   };
 
   return (
-    <SceneTransition durationInFrames={durationInFrames}>
+    <SceneTransition>
       <AbsoluteFill
         style={{
           display: "flex",

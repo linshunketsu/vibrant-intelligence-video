@@ -1,6 +1,7 @@
 import React from "react";
 import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig, Easing } from "remotion";
 import { DottedBackground } from "../components/DottedBackground";
+import { WordStagger } from "../components/WordStagger";
 import { easing, theme } from "../styles/theme";
 
 interface SectionTitleSceneProps {
@@ -10,14 +11,14 @@ interface SectionTitleSceneProps {
   enterDuration?: number;
   exitDuration?: number;
   dramatic?: boolean; // For "One More Thing..." style
+  useWordStagger?: boolean; // Use WordStagger animation for title (default true)
 }
 
 /**
  * SectionTitleScene - Reusable section transition/title card
  *
  * Used for transitions like "One More Thing..." and "Coming Soon".
- * Features flow directly into each other with crossfades, but this
- * component is ready if you want to add section dividers back.
+ * Features flow directly into each other with crossfades.
  *
  * Props:
  * - title: Large bold text (72px), VI dark blue
@@ -26,6 +27,7 @@ interface SectionTitleSceneProps {
  * - enterDuration: Fade-in duration (default 15, 25 for dramatic)
  * - exitDuration: Fade-out duration (default 10)
  * - dramatic: Enables Apple keynote-style slower entrance
+ * - useWordStagger: Use WordStagger animation for title (default true)
  *
  * Duration: ~90 frames (3 seconds) — fast and punchy
  */
@@ -36,6 +38,7 @@ export const SectionTitleScene: React.FC<SectionTitleSceneProps> = ({
   enterDuration = 15,
   exitDuration = 10,
   dramatic = false,
+  useWordStagger = true,
 }) => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
@@ -60,7 +63,7 @@ export const SectionTitleScene: React.FC<SectionTitleSceneProps> = ({
     [0, exitDuration],
     [0, 1],
     {
-      easing: Easing.easeOut,
+      easing: Easing.out(Easing.quad),
       extrapolateRight: "clamp",
     }
   );
@@ -81,8 +84,8 @@ export const SectionTitleScene: React.FC<SectionTitleSceneProps> = ({
     scale = 1;
   }
 
-  // For dramatic effect, add subtle slide up
-  const translateY = dramatic
+  // For dramatic effect, add subtle slide up (only when not using WordStagger)
+  const translateY = !useWordStagger && dramatic
     ? interpolate(enterProgress, [0, 1], [30, 0], {
         easing: Easing.bezier(...easing.material),
         extrapolateRight: "clamp",
@@ -112,7 +115,7 @@ export const SectionTitleScene: React.FC<SectionTitleSceneProps> = ({
             alignItems: "center",
             justifyContent: "center",
             opacity,
-            transform: `scale(${scale}) translateY(${translateY}px)`,
+            transform: `scale(${scale})${translateY ? ` translateY(${translateY}px)` : ""}`,
           }}
         >
           {/* Optional icon */}
@@ -127,18 +130,32 @@ export const SectionTitleScene: React.FC<SectionTitleSceneProps> = ({
             </div>
           )}
 
-          {/* Title */}
-          <div
-            style={{
-              ...titleStyle,
-              color: theme.colors.accent,
-              fontFamily: theme.fonts.heading,
-              letterSpacing: dramatic ? "-0.01em" : "-0.02em",
-              textAlign: "center",
-            }}
-          >
-            {title}
-          </div>
+          {/* Title - with WordStagger animation or plain */}
+          {useWordStagger ? (
+            <WordStagger
+              text={title}
+              delay={dramatic ? 5 : 0}
+              wordDuration={dramatic ? 12 : 10}
+              staggerDelay={dramatic ? 4 : 3}
+              fontSize={titleStyle.fontSize}
+              fontWeight={titleStyle.fontWeight}
+              color={theme.colors.accent}
+              fontFamily={theme.fonts.heading}
+              textAlign="center"
+            />
+          ) : (
+            <div
+              style={{
+                ...titleStyle,
+                color: theme.colors.accent,
+                fontFamily: theme.fonts.heading,
+                letterSpacing: dramatic ? "-0.01em" : "-0.02em",
+                textAlign: "center",
+              }}
+            >
+              {title}
+            </div>
+          )}
 
           {/* Optional subtitle */}
           {subtitle && (
