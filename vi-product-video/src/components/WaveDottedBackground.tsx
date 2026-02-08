@@ -94,17 +94,20 @@ function generateWaveDots(
 
       // Convert wave value (-1 to 1) to opacity (0.4 to 1.0)
       // Higher base opacity so troughs are still visible, peaks are fully solid
-      const opacity = 0.4 + (waveValue + 1) * 0.5 * 0.6;
+      // CRITICAL FIX: Round opacity to 3 decimal places to prevent rendering variations
+      const opacity = Math.round((0.4 + (waveValue + 1) * 0.5 * 0.6) * 1000) / 1000;
 
       // Scale varies with wave - peaks are larger and more solid
+      // CRITICAL FIX: Round radius to integer to prevent sub-pixel rendering artifacts
       const scale = 0.85 + (waveValue + 1) * 0.5 * 0.3;
+      const radius = Math.round(dotRadius * scale * 10) / 10;
 
       dots.push(
         <circle
           key={`${row}-${col}`}
           cx={x}
           cy={y}
-          r={dotRadius * scale}
+          r={radius}
           fill={theme.colors.dotGrid}
           opacity={opacity}
         />

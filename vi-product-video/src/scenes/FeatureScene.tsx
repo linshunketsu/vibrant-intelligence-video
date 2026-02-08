@@ -272,34 +272,41 @@ const CrossfadeScreenshots: React.FC<{ screenshots: string[] }> = ({ screenshots
           { easing: Easing.bezier(...easing.material) }
         );
 
+  // CRITICAL FIX: Round opacity values to prevent rendering inconsistencies
+  const roundedFirstOpacity = Math.round(firstOpacity * 1000) / 1000;
+  const roundedSecondOpacity = Math.round(secondOpacity * 1000) / 1000;
+
   return (
     <div style={{ width: "100%", height: "100%" }}>
       <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true}>
-        <div style={{ width: "100%", height: "100%", position: "relative" }}>
-          {/* First Screenshot */}
-          <img
-            src={screenshots[0]}
-            alt="Feature screenshot 1"
-            style={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              opacity: firstOpacity,
-            }}
-          />
-          {/* Second Screenshot */}
-          <img
-            src={screenshots[1]}
-            alt="Feature screenshot 2"
-            style={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              opacity: secondOpacity,
-            }}
-          />
+        <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
+          {/* CRITICAL FIX: Use conditional rendering to prevent invisible elements from causing artifacts */}
+          {roundedFirstOpacity > 0.001 && (
+            <img
+              src={screenshots[0]}
+              alt="Feature screenshot 1"
+              style={{
+                position: "absolute",
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                opacity: roundedFirstOpacity,
+              }}
+            />
+          )}
+          {roundedSecondOpacity > 0.001 && (
+            <img
+              src={screenshots[1]}
+              alt="Feature screenshot 2"
+              style={{
+                position: "absolute",
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                opacity: roundedSecondOpacity,
+              }}
+            />
+          )}
         </div>
       </BrowserMockup>
     </div>

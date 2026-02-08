@@ -169,6 +169,7 @@ export const FeatureSceneWithCinematicZoom: React.FC<FeatureSceneWithCinematicZo
 
 /**
  * CinematicZoomContent - Wrapper for cinematic zoom effect
+ * CRITICAL: BrowserMockup must be OUTSIDE CinematicZoomHighlight so zoom only affects content
  * Supports both single screenshots and carousel/crossfade layouts
  */
 interface CinematicZoomContentProps {
@@ -200,140 +201,152 @@ const CinematicZoomContent: React.FC<CinematicZoomContentProps> = ({
     showSpotlight: highlightZoom.showSpotlight,
   };
 
-  // For carousel and crossfade, wrap the existing components
+  // For carousel layout - wrap the zoomed content in BrowserMockup OUTSIDE the zoom effect
   if (layout === "carousel" && screenshots.length >= 2) {
-    const ZoomContent = () => (
-      <>
+    const ZoomedContent = () => (
+      <CinematicZoomHighlight {...zoomProps} scale={highlightZoom.scale || 2}>
         <Carousel
           items={screenshots.map((src) => ({ image: src }))}
           slideDuration={75}
           transitionDuration={18}
         />
-        {showCursor && (
-          <AnimatedCursor
-            startPos={showCursor.startPos}
-            endPos={showCursor.endPos}
-            startFrame={showCursor.startFrame}
-            moveDuration={showCursor.moveDuration}
-            clickAtFrame={showCursor.clickAtFrame}
-          />
-        )}
-      </>
-    );
-
-    if (highlightZoom.preset) {
-      return (
-        <CinematicZoomFromPreset
-          preset={highlightZoom.preset}
-          override={{
-            ...(highlightZoom.scale !== undefined && { scale: highlightZoom.scale }),
-            ...(highlightZoom.showCursor !== undefined && { showCursor: highlightZoom.showCursor }),
-            ...(highlightZoom.showVignette !== undefined && { showVignette: highlightZoom.showVignette }),
-            ...(highlightZoom.showSpotlight !== undefined && { showSpotlight: highlightZoom.showSpotlight }),
-          }}
-          {...zoomProps}
-        >
-          <ZoomContent />
-        </CinematicZoomFromPreset>
-      );
-    }
-
-    return (
-      <CinematicZoomHighlight {...zoomProps} scale={highlightZoom.scale || 2}>
-        <ZoomContent />
       </CinematicZoomHighlight>
     );
-  }
-
-  if (layout === "crossfade" && screenshots.length >= 2) {
-    const ZoomContent = () => (
-      <>
-        <CrossfadeScreenshots screenshots={screenshots} />
-        {showCursor && (
-          <AnimatedCursor
-            startPos={showCursor.startPos}
-            endPos={showCursor.endPos}
-            startFrame={showCursor.startFrame}
-            moveDuration={showCursor.moveDuration}
-            clickAtFrame={showCursor.clickAtFrame}
-          />
-        )}
-      </>
-    );
-
-    if (highlightZoom.preset) {
-      return (
-        <CinematicZoomFromPreset
-          preset={highlightZoom.preset}
-          override={{
-            ...(highlightZoom.scale !== undefined && { scale: highlightZoom.scale }),
-            ...(highlightZoom.showCursor !== undefined && { showCursor: highlightZoom.showCursor }),
-            ...(highlightZoom.showVignette !== undefined && { showVignette: highlightZoom.showVignette }),
-            ...(highlightZoom.showSpotlight !== undefined && { showSpotlight: highlightZoom.showSpotlight }),
-          }}
-          {...zoomProps}
-        >
-          <ZoomContent />
-        </CinematicZoomFromPreset>
-      );
-    }
 
     return (
-      <CinematicZoomHighlight {...zoomProps} scale={highlightZoom.scale || 2}>
-        <ZoomContent />
-      </CinematicZoomHighlight>
-    );
-  }
-
-  // For single layout, use the simple image approach
-  const ZoomContent = () => (
-    <>
       <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true}>
+        <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
+          <ZoomedContent />
+        </div>
+      </BrowserMockup>
+    );
+  }
+
+  // For crossfade layout - wrap the zoomed content in BrowserMockup OUTSIDE the zoom effect
+  if (layout === "crossfade" && screenshots.length >= 2) {
+    const ZoomedContent = () => (
+      <CinematicZoomHighlight {...zoomProps} scale={highlightZoom.scale || 2}>
+        <CrossfadeScreenshotsInner screenshots={screenshots} />
+      </CinematicZoomHighlight>
+    );
+
+    return (
+      <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true}>
+        <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
+          <ZoomedContent />
+          {showCursor && (
+            <AnimatedCursor
+              startPos={showCursor.startPos}
+              endPos={showCursor.endPos}
+              startFrame={showCursor.startFrame}
+              moveDuration={showCursor.moveDuration}
+              clickAtFrame={showCursor.clickAtFrame}
+            />
+          )}
+        </div>
+      </BrowserMockup>
+    );
+  }
+
+  // For single layout - wrap the zoomed content in BrowserMockup OUTSIDE the zoom effect
+  const ZoomedContent = () => (
+    <CinematicZoomHighlight {...zoomProps} scale={highlightZoom.scale || 2}>
+      <img
+        src={screenshots[0]}
+        alt="Feature screenshot"
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+        }}
+      />
+    </CinematicZoomHighlight>
+  );
+
+  return (
+    <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true}>
+      <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
+        <ZoomedContent />
+        {showCursor && (
+          <AnimatedCursor
+            startPos={showCursor.startPos}
+            endPos={showCursor.endPos}
+            startFrame={showCursor.startFrame}
+            moveDuration={showCursor.moveDuration}
+            clickAtFrame={showCursor.clickAtFrame}
+          />
+        )}
+      </div>
+    </BrowserMockup>
+  );
+};
+
+/**
+ * CrossfadeScreenshotsInner - Inner crossfade content WITHOUT BrowserMockup wrapper
+ * This is used when BrowserMockup needs to be outside the zoom effect
+ */
+const CrossfadeScreenshotsInner: React.FC<{ screenshots: string[] }> = ({ screenshots }) => {
+  const frame = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
+
+  if (screenshots.length === 0) return null;
+
+  const switchFrame = Math.floor(durationInFrames / 2);
+  const crossfadeDuration = 18;
+
+  const firstOpacity =
+    frame < switchFrame
+      ? 1
+      : interpolate(
+          Math.min(frame - switchFrame, crossfadeDuration),
+          [0, crossfadeDuration],
+          [1, 0],
+          { easing: Easing.bezier(...easing.material) }
+        );
+
+  const secondOpacity =
+    frame < switchFrame - crossfadeDuration
+      ? 0
+      : interpolate(
+          Math.min(Math.max(frame - (switchFrame - crossfadeDuration), 0), crossfadeDuration),
+          [0, crossfadeDuration],
+          [0, 1],
+          { easing: Easing.bezier(...easing.material) }
+        );
+
+  // CRITICAL FIX: Round opacity values to prevent rendering inconsistencies
+  const roundedFirstOpacity = Math.round(firstOpacity * 1000) / 1000;
+  const roundedSecondOpacity = Math.round(secondOpacity * 1000) / 1000;
+
+  return (
+    <>
+      {roundedFirstOpacity > 0.001 && (
         <img
           src={screenshots[0]}
-          alt="Feature screenshot"
+          alt="Feature screenshot 1"
           style={{
+            position: "absolute",
             width: "100%",
             height: "100%",
             objectFit: "cover",
+            opacity: roundedFirstOpacity,
           }}
         />
-      </BrowserMockup>
-      {showCursor && (
-        <AnimatedCursor
-          startPos={showCursor.startPos}
-          endPos={showCursor.endPos}
-          startFrame={showCursor.startFrame}
-          moveDuration={showCursor.moveDuration}
-          clickAtFrame={showCursor.clickAtFrame}
+      )}
+      {roundedSecondOpacity > 0.001 && (
+        <img
+          src={screenshots[1]}
+          alt="Feature screenshot 2"
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            opacity: roundedSecondOpacity,
+          }}
         />
       )}
     </>
-  );
-
-  // Use preset if provided
-  if (highlightZoom.preset) {
-    return (
-      <CinematicZoomFromPreset
-        preset={highlightZoom.preset}
-        override={{
-          ...(highlightZoom.scale !== undefined && { scale: highlightZoom.scale }),
-          ...(highlightZoom.showCursor !== undefined && { showCursor: highlightZoom.showCursor }),
-          ...(highlightZoom.showVignette !== undefined && { showVignette: highlightZoom.showVignette }),
-          ...(highlightZoom.showSpotlight !== undefined && { showSpotlight: highlightZoom.showSpotlight }),
-        }}
-        {...zoomProps}
-      >
-        <ZoomContent />
-      </CinematicZoomFromPreset>
-    );
-  }
-
-  // Use custom configuration
-  return (
-    <CinematicZoomHighlight {...zoomProps} scale={highlightZoom.scale || 2}>
-      <ZoomContent />
-    </CinematicZoomHighlight>
   );
 };
 
@@ -473,65 +486,19 @@ const SingleScreenshot: React.FC<SingleScreenshotProps> = ({
 
 /**
  * CrossfadeScreenshots - Swaps between 2 screenshots with opacity crossfade
+ * Wraps CrossfadeScreenshotsInner with BrowserMockup
  */
 const CrossfadeScreenshots: React.FC<{ screenshots: string[] }> = ({ screenshots }) => {
-  const frame = useCurrentFrame();
-  const { durationInFrames } = useVideoConfig();
-
   if (screenshots.length === 0) return null;
   if (screenshots.length === 1) {
     return <SingleScreenshot screenshots={screenshots} />;
   }
 
-  const switchFrame = Math.floor(durationInFrames / 2);
-  const crossfadeDuration = 18;
-
-  const firstOpacity =
-    frame < switchFrame
-      ? 1
-      : interpolate(
-          Math.min(frame - switchFrame, crossfadeDuration),
-          [0, crossfadeDuration],
-          [1, 0],
-          { easing: Easing.bezier(...easing.material) }
-        );
-
-  const secondOpacity =
-    frame < switchFrame - crossfadeDuration
-      ? 0
-      : interpolate(
-          Math.min(Math.max(frame - (switchFrame - crossfadeDuration), 0), crossfadeDuration),
-          [0, crossfadeDuration],
-          [0, 1],
-          { easing: Easing.bezier(...easing.material) }
-        );
-
   return (
     <div style={{ width: "100%", height: "100%" }}>
       <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true}>
-        <div style={{ width: "100%", height: "100%", position: "relative" }}>
-          <img
-            src={screenshots[0]}
-            alt="Feature screenshot 1"
-            style={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              opacity: firstOpacity,
-            }}
-          />
-          <img
-            src={screenshots[1]}
-            alt="Feature screenshot 2"
-            style={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              opacity: secondOpacity,
-            }}
-          />
+        <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
+          <CrossfadeScreenshotsInner screenshots={screenshots} />
         </div>
       </BrowserMockup>
     </div>

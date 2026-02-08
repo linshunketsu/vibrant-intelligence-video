@@ -1,5 +1,5 @@
-import React from "react";
-import { Composition, Sequence, Audio } from "remotion";
+import React, { useEffect, useState } from "react";
+import { Composition, Sequence, Audio, delayRender, continueRender } from "remotion";
 import soundtrack from "./assets/screenshots/demo music/m4.mp3";
 import { IntroScene } from "./scenes/IntroScene";
 import { FeatureScene } from "./scenes/FeatureScene";
@@ -152,6 +152,55 @@ const SCREENSHOTS = {
 };
 
 export const Video: React.FC = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // CRITICAL FIX: Delay rendering until all images are loaded to prevent flickering
+  // Must be called inside the component, not at module level
+  const delayHandle = delayRender();
+
+  useEffect(() => {
+    // CRITICAL FIX: Preload all images before allowing render to continue
+    // This prevents flickering caused by images loading mid-render
+    const preloadImages = async () => {
+      const imageUrls = Object.values(SCREENSHOTS);
+
+      // Create promises for all image loads
+      const promises = imageUrls.map((src) => {
+        return new Promise<void>((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve();
+          img.onerror = () => reject(new Error(`Failed to load: ${src}`));
+          img.src = src;
+        });
+      });
+
+      // Also preload the soundtrack
+      const audioPromise = new Promise<void>((resolve) => {
+        const audio = new Audio();
+        audio.oncanplaythrough = () => resolve();
+        audio.onerror = () => resolve(); // Don't block on audio errors
+        audio.src = soundtrack;
+      });
+
+      try {
+        await Promise.all([...promises, audioPromise]);
+        setIsLoaded(true);
+        continueRender(delayHandle);
+      } catch (error) {
+        console.error("Error loading assets:", error);
+        // Continue anyway to avoid hanging
+        setIsLoaded(true);
+        continueRender(delayHandle);
+      }
+    };
+
+    preloadImages();
+  }, [delayHandle]);
+
+  if (!isLoaded) {
+    return null;
+  }
+
   return (
     <>
       {/* Background soundtrack */}

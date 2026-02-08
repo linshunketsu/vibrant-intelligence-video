@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "puppeteer": "^24.37.2"
+    "@remotion/cli": "^4.0.419",
+    "puppeteer": "^24.37.2",
+    "remotion": "^4.0.419",
+    "zod": "3.22.3"
   }
 }

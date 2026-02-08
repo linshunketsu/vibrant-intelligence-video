@@ -81,11 +81,23 @@ export const CinematicZoomHighlight: React.FC<CinematicZoomProps> = ({
   // Cursor animation phases
   const cursorProgress = calculateCursorProgress(frame, atFrame, zoomDuration, holdDuration, exitDuration);
 
-  // Calculate if we're in the zoom animation window to apply custom transform origin
-  // Only use custom origin during actual zoom (in, hold, or out) - not before or after
-  const totalEnd = atFrame + zoomDuration + holdDuration + exitDuration;
-  const isInZoomWindow = frame >= atFrame && frame < totalEnd;
-  const transformOrigin = isInZoomWindow ? `${target.x}% ${target.y}%` : "50% 50%";
+  // CRITICAL FIX: Prevent flickering in rendered video by ALWAYS using consistent transform-origin
+  // The abrupt switch between "50% 50%" and target position causes rendering artifacts during
+  // parallel video rendering. Solution: Always use the target origin, but adjust with translate
+  // to keep the content centered when not zooming.
+  // This ensures frame-to-frame consistency across the entire animation.
+  const transformOrigin = `${target.x}% ${target.y}%`;
+
+  // Calculate a translation offset that counteracts the offset from non-center transform-origin
+  // When scale is 1, we need to offset by (50 - target) to keep content centered
+  // When scale > 1, we reduce this offset as the zoom naturally shifts toward the target
+  const offsetWhenNotZoomingX = (50 - target.x) * (scaleValue - 1);
+  const offsetWhenNotZoomingY = (50 - target.y) * (scaleValue - 1);
+
+  // Apply the offset that counteracts the non-center origin
+  // This keeps content visually centered when scale=1, then shifts toward target during zoom
+  const translateOffsetX = offsetWhenNotZoomingX;
+  const translateOffsetY = offsetWhenNotZoomingY;
 
   return (
     <AbsoluteFill style={{ overflow: "visible" }}>
@@ -94,7 +106,7 @@ export const CinematicZoomHighlight: React.FC<CinematicZoomProps> = ({
         style={{
           width: "100%",
           height: "100%",
-          transform: `scale(${scaleValue})`,
+          transform: `translate(${translateOffsetX}%, ${translateOffsetY}%) scale(${scaleValue})`,
           transformOrigin,
         }}
       >

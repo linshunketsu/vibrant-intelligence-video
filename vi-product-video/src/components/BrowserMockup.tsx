@@ -56,20 +56,22 @@ export const BrowserMockup: React.FC<BrowserMockupProps> = ({
   // Reduced shadow (~50% intensity) for carousel side cards to reinforce depth hierarchy
   const shadowIntensity = reducedShadow ? 0.5 : 1;
 
+  // CRITICAL FIX: Round all shadow values to integers to prevent sub-pixel rendering
+  // artifacts that cause flickering during video export
   // Layer 1: Tight ambient shadow (closest to card)
-  const l1Opacity = 0.04 * shadowIntensity * easedProgress;
+  const l1Opacity = Math.round(0.04 * shadowIntensity * easedProgress * 1000) / 1000;
   // Layer 2: Medium spread shadow
-  const l2Opacity = 0.04 * shadowIntensity * easedProgress;
-  const l2Offset = 4 * easedProgress;
-  const l2Blur = 8 * easedProgress;
+  const l2Opacity = Math.round(0.04 * shadowIntensity * easedProgress * 1000) / 1000;
+  const l2Offset = Math.round(4 * easedProgress * 10) / 10;
+  const l2Blur = Math.round(8 * easedProgress * 10) / 10;
   // Layer 3: Large diffuse shadow (main depth)
-  const l3Opacity = 0.06 * shadowIntensity * easedProgress;
-  const l3Offset = 12 * easedProgress;
-  const l3Blur = 24 * easedProgress;
+  const l3Opacity = Math.round(0.06 * shadowIntensity * easedProgress * 1000) / 1000;
+  const l3Offset = Math.round(12 * easedProgress * 10) / 10;
+  const l3Blur = Math.round(24 * easedProgress * 10) / 10;
   // Layer 4: Far ambient shadow (creates "lift" feeling)
-  const l4Opacity = 0.08 * shadowIntensity * easedProgress;
-  const l4Offset = 24 * easedProgress;
-  const l4Blur = 48 * easedProgress;
+  const l4Opacity = Math.round(0.08 * shadowIntensity * easedProgress * 1000) / 1000;
+  const l4Offset = Math.round(24 * easedProgress * 10) / 10;
+  const l4Blur = Math.round(48 * easedProgress * 10) / 10;
 
   const richShadow = `
     0 1px 2px rgba(0, 0, 0, ${l1Opacity}),
