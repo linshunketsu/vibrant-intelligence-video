@@ -78,10 +78,11 @@ export const Carousel: React.FC<CarouselProps> = ({
   const totalSlides = items.length;
 
   // Calculate current slide index
-  const currentSlideIndex = Math.min(
-    Math.floor(frame / totalCycleTime),
-    totalSlides - 1
-  );
+  // After all slides are shown, hold on the last slide
+  const totalCarouselTime = totalSlides * totalCycleTime;
+  const currentSlideIndex = frame < totalCarouselTime
+    ? Math.floor(frame / totalCycleTime)
+    : totalSlides - 1; // Hold on last slide after carousel completes
 
   const frameInCycle = frame % totalCycleTime;
 
@@ -114,8 +115,13 @@ export const Carousel: React.FC<CarouselProps> = ({
           const slideEndFrame = slideStartFrame + slideDuration;
           const transitionEndFrame = slideStartFrame + totalCycleTime;
 
+          // For the last slide, keep it visible after the carousel completes
+          const isLastSlide = index === items.length - 1;
+
           // Not visible at all
-          if (frame < slideStartFrame || frame >= transitionEndFrame) {
+          // Last slide stays visible from its start until end of scene
+          // Other slides are only visible during their cycle
+          if (frame < slideStartFrame || (!isLastSlide && frame >= transitionEndFrame)) {
             return null;
           }
 
@@ -138,7 +144,8 @@ export const Carousel: React.FC<CarouselProps> = ({
             );
           }
           // Fade out at end (during transition period)
-          else if (frame >= slideEndFrame) {
+          // Last slide NEVER fades out, others fade normally
+          else if (frame >= slideEndFrame && !isLastSlide) {
             const framesIntoTransition = frame - slideEndFrame;
             opacity = interpolate(
               framesIntoTransition,
