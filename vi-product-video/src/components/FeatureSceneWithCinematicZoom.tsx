@@ -58,6 +58,7 @@ export interface FeatureSceneWithCinematicZoomProps {
   showCursor?: CursorAnimation;
   highlightZoom?: HighlightZoom;
   fullScreen?: boolean;
+  fastEntrance?: boolean; // For "One More Thing" rapid-fire features - faster entrance (~10 frames)
 }
 
 /**
@@ -92,6 +93,7 @@ export const FeatureSceneWithCinematicZoom: React.FC<FeatureSceneWithCinematicZo
   showCursor,
   highlightZoom,
   fullScreen = false,
+  fastEntrance = false,
 }) => {
   const frame = useCurrentFrame();
 
@@ -106,12 +108,14 @@ export const FeatureSceneWithCinematicZoom: React.FC<FeatureSceneWithCinematicZo
   }
 
   // Use cinematic zoom layout when highlightZoom is provided with preset
+  // NOTE: For carousel layouts, cinematic zoom causes clipping issues with side slides
+  // So we only use cinematic zoom for single/crossfade layouts, or when explicitly requested
   const useCinematicZoom = highlightZoom && (
-    highlightZoom.preset || layout === "cinematic-zoom" || layout === "carousel" || layout === "crossfade"
+    highlightZoom.preset || layout === "cinematic-zoom" || layout === "crossfade"
   );
 
   return (
-    <SceneTransition>
+    <SceneTransition fastEntrance={fastEntrance}>
       <AbsoluteFill
         style={{
           display: "flex",
@@ -119,6 +123,7 @@ export const FeatureSceneWithCinematicZoom: React.FC<FeatureSceneWithCinematicZo
           alignItems: "center",
           justifyContent: "center",
           padding: "60px 100px",
+          overflow: "visible", // Allow carousel side slides to be fully visible
         }}
       >
         {/* Feature Label */}
@@ -156,6 +161,7 @@ export const FeatureSceneWithCinematicZoom: React.FC<FeatureSceneWithCinematicZo
             marginTop: subtitle ? 20 : 30,
             minHeight: 0,
             position: "relative",
+            overflow: "visible", // Allow carousel side slides to be fully visible
           }}
         >
           {useCinematicZoom && highlightZoom ? (

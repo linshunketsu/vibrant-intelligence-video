@@ -6,13 +6,15 @@ import {
   useVideoConfig,
   Easing,
 } from "remotion";
-import { easing, timing, theme } from "../styles/theme";
+import { easing, timing } from "../styles/theme";
+import { WaveDottedBackground } from "./WaveDottedBackground";
 
 interface SceneTransitionProps {
   children: React.ReactNode;
   enterDuration?: number;
   exitDuration?: number;
   breathDuration?: number; // Frames where only background is visible between scenes
+  fastEntrance?: boolean; // For "One More Thing" rapid-fire features - faster entrance (~10 frames)
 }
 
 /**
@@ -31,18 +33,22 @@ export const SceneTransition: React.FC<SceneTransitionProps> = ({
   enterDuration = timing.transition.scale, // 21 frames default
   exitDuration = timing.transition.fade, // 15 frames default
   breathDuration = 8, // 8 frames of just background between scenes
+  fastEntrance = false,
 }) => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
 
+  // Faster entrance for "One More Thing" rapid-fire features
+  const actualEnterDuration = fastEntrance ? 10 : enterDuration;
+
   // Calculate the "hold" period - when content is fully visible
-  const totalTransitionTime = enterDuration + breathDuration + exitDuration;
+  const totalTransitionTime = actualEnterDuration + breathDuration + exitDuration;
   const holdDuration = Math.max(0, durationInFrames - totalTransitionTime);
 
-  // ENTER: frames 0 to enterDuration
-  const enterProgress = interpolate(
-    Math.min(frame, enterDuration),
-    [0, enterDuration],
+  // ENTER: frames 0 to actualEnterDuration
+  const actualEnterProgress = interpolate(
+    Math.min(frame, actualEnterDuration),
+    [0, actualEnterDuration],
     [0, 1],
     {
       easing: Easing.bezier(...easing.material),
@@ -67,11 +73,11 @@ export const SceneTransition: React.FC<SceneTransitionProps> = ({
   let translateY = 0;
   let showContent = true;
 
-  if (frame < enterDuration) {
+  if (frame < actualEnterDuration) {
     // Entering
-    opacity = enterProgress;
-    scale = interpolate(enterProgress, [0, 1], [0.95, 1]);
-    translateY = interpolate(enterProgress, [0, 1], [20, 0]);
+    opacity = actualEnterProgress;
+    scale = interpolate(actualEnterProgress, [0, 1], [0.95, 1]);
+    translateY = interpolate(actualEnterProgress, [0, 1], [20, 0]);
   } else if (frame > exitStartFrame && frame <= exitStartFrame + exitDuration) {
     // Exiting (fade out phase)
     opacity = 1 - exitProgress;
@@ -83,24 +89,19 @@ export const SceneTransition: React.FC<SceneTransitionProps> = ({
   // Else: HOLD period - content fully visible, no animation
 
   return (
-    <AbsoluteFill
-      style={{
-        backgroundColor: theme.colors.background,
-        backgroundImage: `radial-gradient(circle, ${theme.colors.dotGrid} 1px, transparent 1px)`,
-        backgroundSize: "20px 20px",
-      }}
-    >
+    <WaveDottedBackground>
       {showContent && (
         <AbsoluteFill
           style={{
             opacity,
             transform: `scale(${scale}) translateY(${translateY}px)`,
             transformOrigin: "center",
+            overflow: "visible", // Allow carousel side slides to be fully visible
           }}
         >
           {children}
         </AbsoluteFill>
       )}
-    </AbsoluteFill>
+    </WaveDottedBackground>
   );
 };

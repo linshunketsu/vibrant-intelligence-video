@@ -288,6 +288,7 @@ export const EncounterCollaborateFeature: React.FC = () => (
     screenshots={[encounterCollaborate]}
     layout="single"
     durationInFrames={150}
+    fastEntrance={true} // Faster entrance for "One More Thing" rapid-fire section
     highlightZoom={{
       x: 80,              // Right side where collaboration avatars are
       y: 15,              // Top right corner
@@ -311,6 +312,7 @@ export const EncounterSignFeature: React.FC = () => (
     screenshots={[encounterSign]}
     layout="single"
     durationInFrames={150}
+    fastEntrance={true} // Faster entrance for "One More Thing" rapid-fire section
     highlightZoom={{
       x: 50,              // Center where signature is
       y: 70,              // Bottom where the signature line is
@@ -334,6 +336,7 @@ export const ApprovalCenterFeature: React.FC = () => (
     screenshots={[approvalCenter, approvalDetail]}
     layout="crossfade"
     durationInFrames={150}
+    fastEntrance={true} // Faster entrance for "One More Thing" rapid-fire section
     highlightZoom={{
       x: 70,              // Right side where approve/reject buttons are
       y: 60,              // Middle of the approval list

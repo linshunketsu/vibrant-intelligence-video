@@ -88,7 +88,7 @@ export const CinematicZoomHighlight: React.FC<CinematicZoomProps> = ({
   const transformOrigin = isInZoomWindow ? `${target.x}% ${target.y}%` : "50% 50%";
 
   return (
-    <AbsoluteFill style={{ overflow: "hidden" }}>
+    <AbsoluteFill style={{ overflow: "visible" }}>
       {/* Main zoomed content */}
       <div
         style={{

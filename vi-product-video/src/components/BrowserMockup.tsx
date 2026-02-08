@@ -1,6 +1,6 @@
 import React from "react";
-import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from "remotion";
-import { easing, timing, theme } from "../styles/theme";
+import { interpolate, useCurrentFrame, Easing } from "remotion";
+import { easing, theme } from "../styles/theme";
 
 interface BrowserMockupProps {
   url?: string;
@@ -10,6 +10,7 @@ interface BrowserMockupProps {
   entranceDuration?: number; // Frames for entrance animation
   minimal?: boolean; // Use minimal chrome (just top bar, no buttons)
   fullscreen?: boolean; // No chrome at all - just the content
+  reducedShadow?: boolean; // Use ~50% intensity shadow (for carousel side cards)
 }
 
 /**
@@ -34,9 +35,10 @@ export const BrowserMockup: React.FC<BrowserMockupProps> = ({
   children,
   scale = 1,
   shadowOnEntrance = true,
-  entranceDuration = 10,
+  entranceDuration = 15,
   minimal = false,
   fullscreen = false,
+  reducedShadow = false,
 }) => {
   const frame = useCurrentFrame();
 
@@ -50,14 +52,31 @@ export const BrowserMockup: React.FC<BrowserMockupProps> = ({
     extrapolateRight: "clamp",
   });
 
-  // Animate shadow spread (0 → full value)
-  const shadowSpread = interpolate(easedProgress, [0, 1], [0, 1]);
-  const shadowOpacity = interpolate(easedProgress, [0, 1], [0, 0.15]);
+  // RICH LAYERED SHADOW - creates premium "floating" effect
+  // Reduced shadow (~50% intensity) for carousel side cards to reinforce depth hierarchy
+  const shadowIntensity = reducedShadow ? 0.5 : 1;
 
-  const baseShadow = `0 20px 60px rgba(0, 0, 0, ${shadowOpacity})`;
-  const additionalShadow = shadowSpread > 0
-    ? `, 0 ${4 * shadowSpread}px ${24 * shadowSpread}px rgba(0, 0, 0, ${shadowOpacity * 0.5})`
-    : "";
+  // Layer 1: Tight ambient shadow (closest to card)
+  const l1Opacity = 0.04 * shadowIntensity * easedProgress;
+  // Layer 2: Medium spread shadow
+  const l2Opacity = 0.04 * shadowIntensity * easedProgress;
+  const l2Offset = 4 * easedProgress;
+  const l2Blur = 8 * easedProgress;
+  // Layer 3: Large diffuse shadow (main depth)
+  const l3Opacity = 0.06 * shadowIntensity * easedProgress;
+  const l3Offset = 12 * easedProgress;
+  const l3Blur = 24 * easedProgress;
+  // Layer 4: Far ambient shadow (creates "lift" feeling)
+  const l4Opacity = 0.08 * shadowIntensity * easedProgress;
+  const l4Offset = 24 * easedProgress;
+  const l4Blur = 48 * easedProgress;
+
+  const richShadow = `
+    0 1px 2px rgba(0, 0, 0, ${l1Opacity}),
+    0 ${l2Offset}px ${l2Blur}px rgba(0, 0, 0, ${l2Opacity}),
+    0 ${l3Offset}px ${l3Blur}px rgba(0, 0, 0, ${l3Opacity}),
+    0 ${l4Offset}px ${l4Blur}px rgba(0, 0, 0, ${l4Opacity})
+  `;
 
   const borderRadius = fullscreen ? 0 : 12 * scale;
 
@@ -78,7 +97,7 @@ export const BrowserMockup: React.FC<BrowserMockupProps> = ({
             backgroundColor: "#FFFFFF",
             borderRadius,
             overflow: "hidden",
-            boxShadow: baseShadow + additionalShadow,
+            boxShadow: richShadow,
             height: "100%",
           }}
         >
@@ -107,7 +126,7 @@ export const BrowserMockup: React.FC<BrowserMockupProps> = ({
             backgroundColor: "#FFFFFF",
             borderRadius,
             overflow: "hidden",
-            boxShadow: baseShadow + additionalShadow,
+            boxShadow: richShadow,
             height: "100%",
             display: "flex",
             flexDirection: "column",
@@ -211,7 +230,7 @@ export const BrowserMockup: React.FC<BrowserMockupProps> = ({
           backgroundColor: "#FFFFFF",
           borderRadius,
           overflow: "hidden",
-          boxShadow: baseShadow + additionalShadow,
+          boxShadow: richShadow,
           height: "100%",
           display: "flex",
           flexDirection: "column",

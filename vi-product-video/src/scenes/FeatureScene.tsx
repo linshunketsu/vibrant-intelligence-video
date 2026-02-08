@@ -8,6 +8,7 @@ import {
   Sequence,
 } from "remotion";
 import { FeatureLabel } from "../components/FeatureLabel";
+import { FeatureTitle } from "../components/FeatureTitle";
 import { BrowserMockup } from "../components/BrowserMockup";
 import { SceneTransition } from "../components/SceneTransition";
 import { Carousel } from "../components/Carousel";
@@ -43,6 +44,8 @@ interface FeatureSceneProps {
   showCursor?: CursorAnimation;
   highlightZoom?: HighlightZoom;
   fullScreen?: boolean; // For Composer finale only
+  useLargeTitle?: boolean; // Use FeatureTitle (large, bold, WordStagger) instead of FeatureLabel
+  fastEntrance?: boolean; // For "One More Thing" rapid-fire features - faster entrance (~10 frames)
 }
 
 /**
@@ -77,6 +80,8 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
   showCursor,
   highlightZoom,
   fullScreen = false,
+  useLargeTitle = false, // Default to false for backward compatibility
+  fastEntrance = false,
 }) => {
   const frame = useCurrentFrame();
 
@@ -153,7 +158,7 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
   };
 
   return (
-    <SceneTransition>
+    <SceneTransition fastEntrance={fastEntrance}>
       <AbsoluteFill
         style={{
           display: "flex",
@@ -161,33 +166,46 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
           alignItems: "center",
           justifyContent: "center",
           padding: "60px 100px",
+          overflow: "visible", // Allow carousel side slides to be fully visible
         }}
       >
-          {/* Feature Label */}
-          <FeatureLabel
-            text={labelText}
-            delay={5}
-            duration={12}
-            fontSize={16}
-          />
+          {/* Feature Label or Large Title */}
+          {useLargeTitle ? (
+            <FeatureTitle
+              title={title}
+              subtitle={subtitle}
+              delay={5}
+              titleDuration={15}
+              staggerDelay={3}
+            />
+          ) : (
+            <>
+              <FeatureLabel
+                text={labelText}
+                delay={5}
+                duration={12}
+                fontSize={16}
+              />
 
-          {/* Subtitle (if provided) */}
-          {subtitle && (
-            <div
-              style={{
-                fontSize: theme.fontSizes.featureSubtitle,
-                color: theme.colors.textSecondary,
-                fontFamily: theme.fonts.body,
-                marginTop: 16,
-                marginBottom: 24,
-                opacity: frame < 10 ? 0 : 1,
-                transform: frame < 20
-                  ? `translateY(${interpolate(Math.min(frame, 20) - 10, [0, 10], [10, 0])}px)`
-                  : "none",
-              }}
-            >
-              {subtitle}
-            </div>
+              {/* Subtitle (if provided) */}
+              {subtitle && (
+                <div
+                  style={{
+                    fontSize: theme.fontSizes.featureSubtitle,
+                    color: theme.colors.textSecondary,
+                    fontFamily: theme.fonts.body,
+                    marginTop: 16,
+                    marginBottom: 24,
+                    opacity: frame < 10 ? 0 : 1,
+                    transform: frame < 20
+                      ? `translateY(${interpolate(Math.min(frame, 20) - 10, [0, 10], [10, 0])}px)`
+                      : "none",
+                  }}
+                >
+                  {subtitle}
+                </div>
+              )}
+            </>
           )}
 
           {/* Screenshot Display - full available space */}
@@ -197,6 +215,7 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
               width: "100%",
               marginTop: subtitle ? 20 : 30,
               minHeight: 0,
+              overflow: "visible", // Allow carousel side slides to be fully visible
             }}
           >
             {renderScreenshotContent()}

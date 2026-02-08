@@ -22,9 +22,9 @@ interface ComposerSceneProps {
  * Special treatment:
  * - fullScreen: true — fills entire viewport, no floating card, no dotted bg
  * - This is the ONE full-screen takeover (like Manus Scene 6) — creates dramatic contrast
- * - "Coming Soon" badge floats top-right
- * - Subtle teal glow (#8BBDC7) behind edges
- * - Carousel layout for screenshots
+ * - "Coming Soon" badge floats top-right with subtle pulse animation
+ * - Enhanced radial teal glow (#8BBDC7) at edges for intentional full-screen feel
+ * - Carousel layout for screenshots with slower transitions (25 frames instead of 20)
  * - Cursor animation interacting with composer input
  */
 export const ComposerScene: React.FC<ComposerSceneProps> = ({ screenshots }) => {
@@ -33,23 +33,34 @@ export const ComposerScene: React.FC<ComposerSceneProps> = ({ screenshots }) => 
 
   // Fade in for screenshots
   const opacity = interpolate(
-    Math.min(frame, 20),
-    [0, 20],
+    Math.min(frame, 25),
+    [0, 25],
     [0, 1],
     { easing: Easing.bezier(...easing.material) }
   );
 
   // "Coming Soon" badge fade in (slightly delayed)
   const badgeOpacity = interpolate(
-    Math.min(Math.max(frame - 10, 0), 15),
+    Math.min(Math.max(frame - 15, 0), 15),
     [0, 15],
     [0, 1],
     { easing: Easing.bezier(...easing.material) }
   );
 
+  // Subtle pulse animation for "Coming Soon" badge
+  // Very gentle: scale 1 → 1.02 → 1 on loop
+  const pulseCycle = 90; // 3 seconds per pulse cycle
+  const pulseProgress = (frame % pulseCycle) / pulseCycle;
+  const pulseScale = interpolate(
+    pulseProgress,
+    [0, 0.5, 1],
+    [1, 1.02, 1],
+    { easing: Easing.bezier(0.4, 0, 0.2, 1) }
+  );
+
   // Feature name fade in (delayed more)
   const titleOpacity = interpolate(
-    Math.min(Math.max(frame - 15, 0), 15),
+    Math.min(Math.max(frame - 20, 0), 15),
     [0, 15],
     [0, 1],
     { easing: Easing.bezier(...easing.material) }
@@ -61,17 +72,18 @@ export const ComposerScene: React.FC<ComposerSceneProps> = ({ screenshots }) => 
         backgroundColor: theme.colors.background,
       }}
     >
-      {/* Subtle teal glow behind edges */}
+      {/* Enhanced radial teal glow at edges - makes full-screen feel intentional */}
       <div
         style={{
           position: "absolute",
           inset: 0,
-          background: `radial-gradient(ellipse at center, ${theme.colors.accentLight}20 0%, transparent 70%)`,
-          opacity: 0.5,
+          // Stronger radial gradient - teal at edges (~5% opacity), transparent in center
+          background: `radial-gradient(ellipse at center, transparent 40%, ${theme.colors.accentLight}15 100%)`,
+          opacity: 0.8,
         }}
       />
 
-      {/* Full-screen carousel */}
+      {/* Full-screen carousel with slower transitions for dramatic pacing */}
       <div
         style={{
           position: "absolute",
@@ -82,13 +94,13 @@ export const ComposerScene: React.FC<ComposerSceneProps> = ({ screenshots }) => 
         <Carousel
           items={screenshots.map((src) => ({ image: src }))}
           slideDuration={120} // ~4 seconds per slide (510 / 4 ≈ 127)
-          transitionDuration={20}
+          transitionDuration={25} // Slower transitions for dramatic pacing (25 instead of 20)
           centerCardWidth={95} // Nearly full-width for composer finale
           sidePeekWidth={5}
         />
       </div>
 
-      {/* "Coming Soon" badge - top right */}
+      {/* "Coming Soon" badge - top right with pulse animation */}
       <div
         style={{
           position: "absolute",
@@ -102,6 +114,8 @@ export const ComposerScene: React.FC<ComposerSceneProps> = ({ screenshots }) => 
           fontFamily: theme.fonts.body,
           borderRadius: theme.borderRadius.button,
           opacity: badgeOpacity,
+          transform: `scale(${pulseScale})`,
+          transformOrigin: "center",
         }}
       >
         Coming Soon

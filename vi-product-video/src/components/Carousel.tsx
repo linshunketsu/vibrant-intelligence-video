@@ -45,8 +45,8 @@ interface CarouselProps {
  */
 export const Carousel: React.FC<CarouselProps> = ({
   items,
-  slideDuration = 90, // 3 seconds per slide @ 30fps
-  transitionDuration = 24, // 0.8 second transitions (slightly longer for smoother motion)
+  slideDuration = 75, // 2.5 seconds per slide @ 30fps (75 frames = hold time)
+  transitionDuration = 20, // ~0.67 second transitions (20 frames)
   centerCardWidth = 75, // 75% of viewport for centered card (larger for better readability)
   sidePeekWidth = 15, // 15% of viewport for side peek
   layoutMode = "centered",
@@ -111,6 +111,7 @@ export const Carousel: React.FC<CarouselProps> = ({
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
+          overflow: "visible", // Allow side slides to be fully visible
         }}
       >
         {/* Carousel Container - wider to accommodate side slides */}
@@ -122,6 +123,7 @@ export const Carousel: React.FC<CarouselProps> = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            overflow: "visible", // Allow slides to overflow without clipping
           }}
         >
           {items.map((item, index) => {
@@ -130,7 +132,7 @@ export const Carousel: React.FC<CarouselProps> = ({
             // Skip rendering if slide is too far away
             if (relativePosition === null) return null;
 
-            const { xPercent, scale, opacity, blur, zIndex } = relativePosition;
+            const { xPercent, scale, opacity, blur, zIndex, isCenter } = relativePosition;
 
             return (
               <div
@@ -145,7 +147,7 @@ export const Carousel: React.FC<CarouselProps> = ({
                   transition: "none", // Remotion handles animations via frame-based interpolation
                 }}
               >
-                <SlideCard item={item} scale={scale} opacity={1} blur={blur} dimAmount={(1 - opacity) * 1.2} />
+                <SlideCard item={item} scale={scale} opacity={1} blur={blur} dimAmount={(1 - opacity) * 1.2} isCenter={isCenter} />
               </div>
             );
           })}
@@ -249,7 +251,7 @@ function getRelativePosition(
   currentIndex: number,
   totalSlides: number,
   transitionProgress: number
-): { xPercent: number; scale: number; opacity: number; blur: number; zIndex: number } | null {
+): { xPercent: number; scale: number; opacity: number; blur: number; zIndex: number; isCenter: boolean } | null {
   // Handle wrap-around for circular navigation
   const getWrappedIndex = (idx: number, max: number) => ((idx % max) + max) % max;
 
@@ -268,14 +270,14 @@ function getRelativePosition(
   if (!isTransitioning) {
     // Static state - no transition in progress
     if (distance === 0) {
-      // Center slide
-      return { xPercent: 0, scale: 1.1, opacity: 1, blur: 0, zIndex: 10 };
+      // Center slide - exactly at 1.0 scale, no extra enlargement
+      return { xPercent: 0, scale: 1.0, opacity: 1, blur: 0, zIndex: 10, isCenter: true };
     } else if (distance === -1 || (distance === totalSlides - 1 && totalSlides > 2)) {
-      // Previous slide (left side)
-      return { xPercent: -100, scale: 0.75, opacity: 0.4, blur: 2, zIndex: 5 };
+      // Previous slide (left side) - slightly scaled down
+      return { xPercent: -100, scale: 0.85, opacity: 0.4, blur: 2, zIndex: 5, isCenter: false };
     } else if (distance === 1 || (distance === -(totalSlides - 1) && totalSlides > 2)) {
-      // Next slide (right side)
-      return { xPercent: 100, scale: 0.75, opacity: 0.4, blur: 2, zIndex: 5 };
+      // Next slide (right side) - slightly scaled down
+      return { xPercent: 100, scale: 0.85, opacity: 0.4, blur: 2, zIndex: 5, isCenter: false };
     }
     return null; // Too far away, don't render
   }
@@ -291,26 +293,30 @@ function getRelativePosition(
 
   if (distance === 0) {
     // Current slide - moving from center to left
+    // Scale: 1.0 → 0.95 → 0.85 (slight shrink during exit)
     return {
       xPercent: interpolate(easedProgress, [0, 1], [0, -100]),
-      scale: interpolate(easedProgress, [0, 1], [1.1, 0.75]),
+      scale: interpolate(easedProgress, [0, 1], [1.0, 0.85]),
       opacity: interpolate(easedProgress, [0, 1], [1, 0.4]),
       blur: interpolate(easedProgress, [0, 1], [0, 2]),
       zIndex: 10,
+      isCenter: easedProgress < 0.5, // Considered "center" during first half of transition
     };
   } else if (distance === 1 || (distance === -(totalSlides - 1) && totalSlides > 2)) {
     // Next slide - moving from right to center
+    // Scale: 0.85 → 0.95 → 1.0 (slight grow during entrance)
     return {
       xPercent: interpolate(easedProgress, [0, 1], [100, 0]),
-      scale: interpolate(easedProgress, [0, 1], [0.75, 1.1]),
+      scale: interpolate(easedProgress, [0, 1], [0.85, 1.0]),
       opacity: interpolate(easedProgress, [0, 1], [0.4, 1]),
       blur: interpolate(easedProgress, [0, 1], [2, 0]),
       zIndex: 10,
+      isCenter: easedProgress >= 0.5, // Considered "center" during second half of transition
     };
   } else if (distance === -1 || (distance === totalSlides - 1 && totalSlides > 2)) {
     // Previous slide - moving from left to further left (exiting)
     const exitingX = interpolate(easedProgress, [0, 1], [-100, -140]);
-    const exitingScale = interpolate(easedProgress, [0, 1], [0.75, 0.6]);
+    const exitingScale = interpolate(easedProgress, [0, 1], [0.85, 0.7]);
     const exitingOpacity = interpolate(easedProgress, [0, 1], [0.4, 0]);
     const exitingBlur = interpolate(easedProgress, [0, 1], [2, 6]);
     return {
@@ -319,11 +325,12 @@ function getRelativePosition(
       opacity: exitingOpacity,
       blur: exitingBlur,
       zIndex: 3,
+      isCenter: false,
     };
   } else if (distance === 2 || (distance === -(totalSlides - 2) && totalSlides > 3)) {
     // Two steps ahead - entering from right
     const enteringX = interpolate(easedProgress, [0, 1], [140, 100]);
-    const enteringScale = interpolate(easedProgress, [0, 1], [0.6, 0.75]);
+    const enteringScale = interpolate(easedProgress, [0, 1], [0.7, 0.85]);
     const enteringOpacity = interpolate(easedProgress, [0, 1], [0, 0.4]);
     const enteringBlur = interpolate(easedProgress, [0, 1], [6, 2]);
     return {
@@ -332,6 +339,7 @@ function getRelativePosition(
       opacity: enteringOpacity,
       blur: enteringBlur,
       zIndex: 3,
+      isCenter: false,
     };
   }
 
@@ -347,7 +355,34 @@ const SlideCard: React.FC<{
   opacity: number;
   blur: number;
   dimAmount?: number; // 0 = no dim, 1 = fully dimmed (dark overlay)
-}> = ({ item, scale, opacity, blur, dimAmount = 0 }) => {
+  isCenter?: boolean; // true = full shadow, false = reduced shadow (for side cards)
+}> = ({ item, scale, opacity, blur, dimAmount = 0, isCenter = true }) => {
+  // Rich layered shadow - reduced intensity for side cards to reinforce depth hierarchy
+  // Center card floats higher (stronger shadow), side cards float lower (weaker shadow)
+  const shadowIntensity = isCenter ? 1 : 0.5;
+
+  // Layer 1: Tight ambient shadow (closest to card)
+  const l1Opacity = 0.04 * shadowIntensity;
+  // Layer 2: Medium spread shadow
+  const l2Opacity = 0.04 * shadowIntensity;
+  const l2Offset = 4;
+  const l2Blur = 8;
+  // Layer 3: Large diffuse shadow (main depth)
+  const l3Opacity = 0.06 * shadowIntensity;
+  const l3Offset = 12;
+  const l3Blur = 24;
+  // Layer 4: Far ambient shadow (creates "lift" feeling)
+  const l4Opacity = 0.08 * shadowIntensity;
+  const l4Offset = 24;
+  const l4Blur = 48;
+
+  const richShadow = `
+    0 1px 2px rgba(0, 0, 0, ${l1Opacity}),
+    0 ${l2Offset}px ${l2Blur}px rgba(0, 0, 0, ${l2Opacity}),
+    0 ${l3Offset}px ${l3Blur}px rgba(0, 0, 0, ${l3Opacity}),
+    0 ${l4Offset}px ${l4Blur}px rgba(0, 0, 0, ${l4Opacity})
+  `;
+
   return (
     <div
       style={{
@@ -363,7 +398,7 @@ const SlideCard: React.FC<{
           backgroundColor: theme.colors.card,
           borderRadius: theme.borderRadius.card,
           overflow: "hidden",
-          boxShadow: `0 20px 60px ${theme.colors.cardShadow}`,
+          boxShadow: richShadow,
           display: "flex",
           flexDirection: "column",
           // Auto height based on content

@@ -5,7 +5,7 @@
 
 export const theme = {
   colors: {
-    background: '#F8F7F4',        // warm off-white (Manus-style canvas)
+    background: '#F8F8F8',        // cool light gray background
     dotGrid: '#E0DDD8',           // subtle dot color
     text: '#1A1A1A',              // near-black
     textSecondary: '#6B7280',     // gray
