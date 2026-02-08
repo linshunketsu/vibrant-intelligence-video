@@ -83,8 +83,8 @@ export const ComposerScene: React.FC<ComposerSceneProps> = ({ screenshots }) => 
           items={screenshots.map((src) => ({ image: src }))}
           slideDuration={120} // ~4 seconds per slide (510 / 4 ≈ 127)
           transitionDuration={20}
-          centerCardWidth={75} // Wider for full-screen effect
-          sidePeekWidth={12}
+          centerCardWidth={95} // Nearly full-width for composer finale
+          sidePeekWidth={5}
         />
       </div>
 

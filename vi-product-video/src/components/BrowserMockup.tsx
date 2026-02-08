@@ -90,7 +90,7 @@ export const BrowserMockup: React.FC<BrowserMockupProps> = ({
 
   // Minimal mode - just a slim top bar
   if (minimal) {
-    const minimalBarHeight = 24 * scale;
+    const minimalBarHeight = 18 * scale;
 
     return (
       <div
