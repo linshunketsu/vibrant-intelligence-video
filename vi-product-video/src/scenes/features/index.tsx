@@ -86,18 +86,18 @@ export const HealthTabFeature: React.FC = () => (
     title="Health Tab"
     subtitle="Instant Clinical Context"
     screenshots={[healthOverview, healthVariables]}
-    layout="carousel"
+    layout="crossfade"
     durationInFrames={360}
     showCursor={{
-      startPos: { x: 50, y: 56 }, // At the zoom target (center of health variables)
-      endPos: { x: 50, y: 56 },    // Stay there
-      startFrame: 140,             // Start just before zoom
+      startPos: { x: 50, y: 59 }, // At the zoom target (center of health variables)
+      endPos: { x: 50, y: 59 },    // Stay there
+      startFrame: 170,             // Start after zoom begins (second slide is visible)
       moveDuration: 10,            // Quick move into position
-      clickAtFrame: 160,           // Click during zoom to show interaction
+      clickAtFrame: 190,           // Click during zoom hold
     }}
     highlightZoom={{
       x: 50,              // Center
-      y: 56,              // Slightly below center
+      y: 59,              // Slightly below center
       scale: 2.5,          // Higher zoom level
       preset: "subtle",
       atFrame: 150,       // Start zoom when second screenshot appears (~5s)

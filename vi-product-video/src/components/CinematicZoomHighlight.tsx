@@ -81,6 +81,12 @@ export const CinematicZoomHighlight: React.FC<CinematicZoomProps> = ({
   // Cursor animation phases
   const cursorProgress = calculateCursorProgress(frame, atFrame, zoomDuration, holdDuration, exitDuration);
 
+  // Calculate if we're in the zoom animation window to apply custom transform origin
+  // Only use custom origin during actual zoom (in, hold, or out) - not before or after
+  const totalEnd = atFrame + zoomDuration + holdDuration + exitDuration;
+  const isInZoomWindow = frame >= atFrame && frame < totalEnd;
+  const transformOrigin = isInZoomWindow ? `${target.x}% ${target.y}%` : "50% 50%";
+
   return (
     <AbsoluteFill style={{ overflow: "hidden" }}>
       {/* Main zoomed content */}
@@ -89,7 +95,7 @@ export const CinematicZoomHighlight: React.FC<CinematicZoomProps> = ({
           width: "100%",
           height: "100%",
           transform: `scale(${scaleValue})`,
-          transformOrigin: `${target.x}% ${target.y}%`,
+          transformOrigin,
         }}
       >
         {children}
