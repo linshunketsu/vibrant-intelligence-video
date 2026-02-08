@@ -102,7 +102,7 @@ export const HealthTabFeature: React.FC = () => (
       preset: "subtle",
       atFrame: 150,       // Start zoom when second screenshot appears (~5s)
       holdDuration: 120,  // Hold for 4 seconds
-      showRing: false,    // Hide the ring, use cursor instead for human-like interaction
+      showCursor: false,  // Disable the built-in cursor, using the manual showCursor instead
     }}
   />
 );
@@ -157,19 +157,13 @@ export const QuickActionsFeature: React.FC = () => (
     screenshots={[quickBar, quickExpanded]}
     layout="crossfade"
     durationInFrames={300}
-    showCursor={{
-      startPos: { x: 20, y: 50 },
-      endPos: { x: 30, y: 45 },
-      startFrame: 40,
-      moveDuration: 15,
-      clickAtFrame: 55,
-    }}
     highlightZoom={{
-      x: 20,              // Left side where the action icons are
+      x: 25,              // Slightly right of center on action icons
       y: 95,              // Bottom area above the chat input bar
       preset: "snappy",   // Quick, energetic zoom
       atFrame: 90,        // Start zoom at 3s
       holdDuration: 20,   // Hold for 0.67 seconds (total zoom ends by frame 137, before crossfade at 150)
+      cursorStartOffset: { x: 60, y: 70 }, // Cursor starts from right side
     }}
   />
 );
@@ -179,6 +173,7 @@ export const QuickActionsFeature: React.FC = () => (
  * Layout: carousel with side peeks (~5s per slide)
  * Screenshots: 4
  * Subtitle: "AI-Powered Documentation"
+ * Cursor: YES — cursor in bottom left on second slide (encounterZoom), moves up and right
  */
 export const EncounterNotesFeature: React.FC = () => (
   <FeatureScene
@@ -188,6 +183,13 @@ export const EncounterNotesFeature: React.FC = () => (
     screenshots={[encounterEditor, encounterZoom, encounterBlocks, encounterVariables]}
     layout="carousel"
     durationInFrames={750}
+    showCursor={{
+      startPos: { x: 15, y: 85 },   // Bottom left corner
+      endPos: { x: 23, y: 83 },      // Move up by 2, right by 8
+      startFrame: 125,               // Start very late in second slide (~4.2s)
+      moveDuration: 5,               // Instant movement
+      clickAtFrame: 135,             // Click at 4.5s, fully faded by 157
+    }}
   />
 );
 

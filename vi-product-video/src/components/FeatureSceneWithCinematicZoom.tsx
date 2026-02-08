@@ -31,10 +31,10 @@ export interface HighlightZoom {
   duration?: number; // Frames for zoom animation (default: from preset or 20)
   holdDuration?: number; // Frames to hold at full zoom (default: from preset or 60)
   preset?: ZoomPreset; // Use a pre-configured cinematic preset
-  showRing?: boolean; // Show highlight ring
+  showCursor?: boolean; // Show animated cursor (replaces ring)
   showVignette?: boolean; // Darken surrounding area
   showSpotlight?: boolean; // Add glow effect
-  ringColor?: string; // Custom ring color
+  cursorStartOffset?: { x: number; y: number }; // Where cursor starts
 }
 
 export interface CursorAnimation {
@@ -217,10 +217,10 @@ const CinematicZoomContent: React.FC<CinematicZoomContentProps> = ({
     atFrame: highlightZoom.atFrame,
     holdDuration: highlightZoom.holdDuration,
     zoomDuration: highlightZoom.duration,
-    showRing: highlightZoom.showRing,
+    showCursor: highlightZoom.showCursor,
+    cursorStartOffset: highlightZoom.cursorStartOffset,
     showVignette: highlightZoom.showVignette,
     showSpotlight: highlightZoom.showSpotlight,
-    ringColor: highlightZoom.ringColor,
   };
 
   // For carousel and crossfade, wrap the existing components
@@ -250,7 +250,7 @@ const CinematicZoomContent: React.FC<CinematicZoomContentProps> = ({
           preset={highlightZoom.preset}
           override={{
             ...(highlightZoom.scale !== undefined && { scale: highlightZoom.scale }),
-            ...(highlightZoom.showRing !== undefined && { showRing: highlightZoom.showRing }),
+            ...(highlightZoom.showCursor !== undefined && { showCursor: highlightZoom.showCursor }),
             ...(highlightZoom.showVignette !== undefined && { showVignette: highlightZoom.showVignette }),
             ...(highlightZoom.showSpotlight !== undefined && { showSpotlight: highlightZoom.showSpotlight }),
           }}
@@ -290,7 +290,7 @@ const CinematicZoomContent: React.FC<CinematicZoomContentProps> = ({
           preset={highlightZoom.preset}
           override={{
             ...(highlightZoom.scale !== undefined && { scale: highlightZoom.scale }),
-            ...(highlightZoom.showRing !== undefined && { showRing: highlightZoom.showRing }),
+            ...(highlightZoom.showCursor !== undefined && { showCursor: highlightZoom.showCursor }),
             ...(highlightZoom.showVignette !== undefined && { showVignette: highlightZoom.showVignette }),
             ...(highlightZoom.showSpotlight !== undefined && { showSpotlight: highlightZoom.showSpotlight }),
           }}
@@ -341,7 +341,7 @@ const CinematicZoomContent: React.FC<CinematicZoomContentProps> = ({
         preset={highlightZoom.preset}
         override={{
           ...(highlightZoom.scale !== undefined && { scale: highlightZoom.scale }),
-          ...(highlightZoom.showRing !== undefined && { showRing: highlightZoom.showRing }),
+          ...(highlightZoom.showCursor !== undefined && { showCursor: highlightZoom.showCursor }),
           ...(highlightZoom.showVignette !== undefined && { showVignette: highlightZoom.showVignette }),
           ...(highlightZoom.showSpotlight !== undefined && { showSpotlight: highlightZoom.showSpotlight }),
         }}

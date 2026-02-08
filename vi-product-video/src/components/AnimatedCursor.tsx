@@ -92,8 +92,11 @@ export const AnimatedCursor: React.FC<AnimatedCursorProps> = ({
   // Fade cursor in on entry, fade out after click (if any)
   let opacity = 1;
   const fadeInDuration = 6;
-  const fadeOutDelay = clickAtFrame !== null ? clickAtFrame + 12 : moveDuration + 30;
-  const fadeOutDuration = 10;
+  // Calculate fade out delay relative to startFrame
+  // If there's a click, fade out after click animation (8 frames), otherwise after move + delay
+  const clickOffset = clickAtFrame !== null ? clickAtFrame - startFrame + 8 : null;
+  const fadeOutDelay = clickOffset !== null ? clickOffset : moveDuration + 30;
+  const fadeOutDuration = 6; // Quick fade out
 
   if (frameSinceStart < fadeInDuration) {
     opacity = interpolate(frameSinceStart, [0, fadeInDuration], [0, 1]);
