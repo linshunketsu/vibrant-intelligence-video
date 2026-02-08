@@ -27,8 +27,8 @@ export const theme = {
   fontSizes: {
     heroTitle: 80,       // intro/outro "Vibrant Intelligence"
     sectionTitle: 72,    // section transition titles
-    featureTitle: 48,    // feature name
-    featureSubtitle: 24, // feature description
+    featureTitle: 52,    // feature name - large, bold, striking
+    featureSubtitle: 22, // feature description
     uiText: 18,          // matches prototype UI text
     caption: 14,         // small labels
   },

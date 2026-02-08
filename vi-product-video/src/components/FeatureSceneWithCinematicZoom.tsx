@@ -7,7 +7,7 @@ import {
   Easing,
   Sequence,
 } from "remotion";
-import { FeatureLabel } from "./FeatureLabel";
+import { FeatureTitle } from "./FeatureTitle";
 import { BrowserMockup } from "./BrowserMockup";
 import { SceneTransition } from "./SceneTransition";
 import { Carousel } from "./Carousel";
@@ -48,9 +48,7 @@ export interface CursorAnimation {
 type ScreenshotLayout = "single" | "carousel" | "crossfade" | "cinematic-zoom";
 
 export interface FeatureSceneWithCinematicZoomProps {
-  featureNumber?: number;
   title: string;
-  label?: string;
   subtitle?: string;
   screenshots: string[];
   layout?: ScreenshotLayout;
@@ -70,7 +68,6 @@ export interface FeatureSceneWithCinematicZoomProps {
  * Usage:
  * ```tsx
  * <FeatureSceneWithCinematicZoom
- *   featureNumber={1}
  *   title="AI-Powered Analytics"
  *   screenshots={["/screenshot1.png"]}
  *   highlightZoom={{
@@ -83,8 +80,6 @@ export interface FeatureSceneWithCinematicZoomProps {
  * ```
  */
 export const FeatureSceneWithCinematicZoom: React.FC<FeatureSceneWithCinematicZoomProps> = ({
-  featureNumber,
-  label,
   title,
   subtitle,
   screenshots,
@@ -96,12 +91,6 @@ export const FeatureSceneWithCinematicZoom: React.FC<FeatureSceneWithCinematicZo
   fastEntrance = false,
 }) => {
   const frame = useCurrentFrame();
-
-  const labelText = label !== undefined
-    ? label
-    : featureNumber !== undefined
-      ? `${featureNumber.toString().padStart(2, "0")} / ${title}`
-      : title;
 
   if (fullScreen) {
     return <FullScreenFeatureScene title={title} screenshots={screenshots} />;
@@ -126,32 +115,14 @@ export const FeatureSceneWithCinematicZoom: React.FC<FeatureSceneWithCinematicZo
           overflow: "visible", // Allow carousel side slides to be fully visible
         }}
       >
-        {/* Feature Label */}
-        <FeatureLabel
-          text={labelText}
+        {/* Feature Title - large, bold, striking */}
+        <FeatureTitle
+          title={title}
+          subtitle={subtitle}
           delay={5}
-          duration={12}
-          fontSize={16}
+          titleDuration={15}
+          staggerDelay={3}
         />
-
-        {/* Subtitle */}
-        {subtitle && (
-          <div
-            style={{
-              fontSize: theme.fontSizes.featureSubtitle,
-              color: theme.colors.textSecondary,
-              fontFamily: theme.fonts.body,
-              marginTop: 16,
-              marginBottom: 24,
-              opacity: frame < 10 ? 0 : 1,
-              transform: frame < 20
-                ? `translateY(${interpolate(Math.min(frame, 20) - 10, [0, 10], [10, 0])}px)`
-                : "none",
-            }}
-          >
-            {subtitle}
-          </div>
-        )}
 
         {/* Screenshot Display */}
         <div

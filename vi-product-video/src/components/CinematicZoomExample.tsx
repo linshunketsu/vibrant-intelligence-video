@@ -21,7 +21,6 @@ const EXAMPLE_SCREENSHOT = "https://placehold.co/1920x1080/1a1a2e/FFF?text=Produ
 export const PresetExample: React.FC = () => {
   return (
     <FeatureSceneWithCinematicZoom
-      featureNumber={1}
       title="Preset: Dramatic"
       subtitle="Strong zoom with ring, vignette, and spotlight"
       screenshots={[EXAMPLE_SCREENSHOT]}

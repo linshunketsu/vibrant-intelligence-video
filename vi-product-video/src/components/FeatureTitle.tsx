@@ -98,7 +98,7 @@ export const FeatureTitle: React.FC<FeatureTitleProps> = ({
       {subtitle && (
         <div
           style={{
-            fontSize: 22,
+            fontSize: theme.fontSizes.featureSubtitle,
             fontWeight: 500,
             color: theme.colors.textSecondary,
             fontFamily: theme.fonts.body,

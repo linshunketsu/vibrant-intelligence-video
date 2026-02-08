@@ -63,7 +63,6 @@ import composerDocument from "../../assets/screenshots/composer-document.png";
  */
 export const ChatMultichannelFeature: React.FC = () => (
   <FeatureScene
-    featureNumber={1}
     title="Chat + SMS + Email"
     subtitle="Unified Communication"
     screenshots={[chatInbox, chatThread, chatTypes]}
@@ -82,7 +81,6 @@ export const ChatMultichannelFeature: React.FC = () => (
  */
 export const HealthTabFeature: React.FC = () => (
   <FeatureSceneWithCinematicZoom
-    featureNumber={2}
     title="Health Tab"
     subtitle="Instant Clinical Context"
     screenshots={[healthOverview, healthVariables]}
@@ -115,7 +113,6 @@ export const HealthTabFeature: React.FC = () => (
  */
 export const CalendarFeature: React.FC = () => (
   <FeatureScene
-    featureNumber={3}
     title="Calendar"
     subtitle="Smart Scheduling"
     screenshots={[calendarClinic, calendarBooking, calendarIntegrations, calendarZoom]}
@@ -132,7 +129,6 @@ export const CalendarFeature: React.FC = () => (
  */
 export const PegBoardFeature: React.FC = () => (
   <FeatureScene
-    featureNumber={4}
     title="Peg Board"
     subtitle="Your Personal Reference Board"
     screenshots={[pegboardPanel, pegboardPin]}
@@ -151,7 +147,6 @@ export const PegBoardFeature: React.FC = () => (
  */
 export const QuickActionsFeature: React.FC = () => (
   <FeatureSceneWithCinematicZoom
-    featureNumber={5}
     title="Quick Actions"
     subtitle="One-Click Clinical Actions"
     screenshots={[quickBar, quickExpanded]}
@@ -177,7 +172,6 @@ export const QuickActionsFeature: React.FC = () => (
  */
 export const EncounterNotesFeature: React.FC = () => (
   <FeatureScene
-    featureNumber={6}
     title="Encounter Notes"
     subtitle="AI-Powered Documentation"
     screenshots={[encounterEditor, encounterZoom, encounterBlocks, encounterVariables]}
@@ -202,7 +196,6 @@ export const EncounterNotesFeature: React.FC = () => (
  */
 export const WorkflowAIFeature: React.FC = () => (
   <FeatureSceneWithCinematicZoom
-    featureNumber={7}
     title="Workflow + AI"
     subtitle="Intelligent Care Pathways"
     screenshots={[workflowOverview, workflowNodes, workflowCompose, workflowGenerated, workflowGuardian]}
@@ -228,7 +221,6 @@ export const WorkflowAIFeature: React.FC = () => (
  */
 export const FormBuilderFeature: React.FC = () => (
   <FeatureScene
-    featureNumber={8}
     title="Form Builder"
     subtitle="AI Form Creation"
     screenshots={[formComponents, formAiPrompt, formAiResult, formMapping]}
@@ -253,7 +245,6 @@ export const FormBuilderFeature: React.FC = () => (
  */
 export const MyPracticeFeature: React.FC = () => (
   <FeatureSceneWithCinematicZoom
-    featureNumber={9}
     title="My Practice"
     subtitle="Your Command Center"
     screenshots={[practiceDashboard, practiceSentiment, practiceAskAi]}
@@ -327,7 +318,6 @@ export const EncounterSignFeature: React.FC = () => (
  * FEATURE 12: Approval Center (5s = 150 frames)
  * Layout: crossfade — fast entrance
  * Screenshots: 2
- * Cinematic Zoom: YES — zoom into the approval buttons
  */
 export const ApprovalCenterFeature: React.FC = () => (
   <FeatureSceneWithCinematicZoom
@@ -337,13 +327,6 @@ export const ApprovalCenterFeature: React.FC = () => (
     layout="crossfade"
     durationInFrames={150}
     fastEntrance={true} // Faster entrance for "One More Thing" rapid-fire section
-    highlightZoom={{
-      x: 70,              // Right side where approve/reject buttons are
-      y: 60,              // Middle of the approval list
-      preset: "snappy",
-      atFrame: 50,
-      holdDuration: 60,
-    }}
   />
 );
 

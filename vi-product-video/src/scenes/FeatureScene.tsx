@@ -7,7 +7,6 @@ import {
   Easing,
   Sequence,
 } from "remotion";
-import { FeatureLabel } from "../components/FeatureLabel";
 import { FeatureTitle } from "../components/FeatureTitle";
 import { BrowserMockup } from "../components/BrowserMockup";
 import { SceneTransition } from "../components/SceneTransition";
@@ -34,9 +33,7 @@ interface CursorAnimation {
 type ScreenshotLayout = "single" | "carousel" | "crossfade";
 
 interface FeatureSceneProps {
-  featureNumber?: number; // 1-13 (optional - if not provided, won't show number badge)
   title: string;
-  label?: string; // Optional label text to override featureNumber badge
   subtitle?: string;
   screenshots: string[]; // Paths to screenshot images
   layout?: ScreenshotLayout;
@@ -44,7 +41,6 @@ interface FeatureSceneProps {
   showCursor?: CursorAnimation;
   highlightZoom?: HighlightZoom;
   fullScreen?: boolean; // For Composer finale only
-  useLargeTitle?: boolean; // Use FeatureTitle (large, bold, WordStagger) instead of FeatureLabel
   fastEntrance?: boolean; // For "One More Thing" rapid-fire features - faster entrance (~10 frames)
 }
 
@@ -70,8 +66,6 @@ interface FeatureSceneProps {
  * - Frames (end-5) to end: Just dotted background visible (the "breath")
  */
 export const FeatureScene: React.FC<FeatureSceneProps> = ({
-  featureNumber,
-  label,
   title,
   subtitle,
   screenshots,
@@ -80,17 +74,9 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
   showCursor,
   highlightZoom,
   fullScreen = false,
-  useLargeTitle = false, // Default to false for backward compatibility
   fastEntrance = false,
 }) => {
   const frame = useCurrentFrame();
-
-  // Format feature number as "01", "02", etc. if provided, otherwise use label
-  const labelText = label !== undefined
-    ? label
-    : featureNumber !== undefined
-      ? `${featureNumber.toString().padStart(2, "0")} / ${title}`
-      : title;
 
   if (fullScreen) {
     // Full-screen layout for Composer finale
@@ -169,44 +155,14 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
           overflow: "visible", // Allow carousel side slides to be fully visible
         }}
       >
-          {/* Feature Label or Large Title */}
-          {useLargeTitle ? (
-            <FeatureTitle
-              title={title}
-              subtitle={subtitle}
-              delay={5}
-              titleDuration={15}
-              staggerDelay={3}
-            />
-          ) : (
-            <>
-              <FeatureLabel
-                text={labelText}
-                delay={5}
-                duration={12}
-                fontSize={16}
-              />
-
-              {/* Subtitle (if provided) */}
-              {subtitle && (
-                <div
-                  style={{
-                    fontSize: theme.fontSizes.featureSubtitle,
-                    color: theme.colors.textSecondary,
-                    fontFamily: theme.fonts.body,
-                    marginTop: 16,
-                    marginBottom: 24,
-                    opacity: frame < 10 ? 0 : 1,
-                    transform: frame < 20
-                      ? `translateY(${interpolate(Math.min(frame, 20) - 10, [0, 10], [10, 0])}px)`
-                      : "none",
-                  }}
-                >
-                  {subtitle}
-                </div>
-              )}
-            </>
-          )}
+          {/* Feature Title - large, bold, striking */}
+          <FeatureTitle
+            title={title}
+            subtitle={subtitle}
+            delay={5}
+            titleDuration={15}
+            staggerDelay={3}
+          />
 
           {/* Screenshot Display - full available space */}
           <div
