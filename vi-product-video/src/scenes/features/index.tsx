@@ -187,12 +187,12 @@ export const QuickActionsFeature: React.FC = () => (
     layout="crossfade"
     durationInFrames={500}
     highlightZoom={{
-      x: 25,              // Slightly right of center on action icons
-      y: 95,              // Bottom area above the chat input bar
+      x: 35,              // Left of center on action icons
+      y: 85,              // Above the chat input bar
       preset: "snappy",   // Quick, energetic zoom
       atFrame: 90,        // Start zoom at 3s
       holdDuration: 20,   // Hold for 0.67 seconds (total zoom ends by frame 137, before crossfade at 150)
-      cursorStartOffset: { x: 60, y: 70 }, // Cursor starts from right side
+      cursorStartOffset: { x: 10, y: 70 }, // Cursor starts from left side
     }}
   />
 );
@@ -216,9 +216,9 @@ export const EncounterNotesFeature: React.FC = () => (
     showCursor={{
       startPos: { x: 15, y: 85 },   // Bottom left corner
       endPos: { x: 23, y: 83 },      // Move up by 2, right by 8
-      startFrame: 125,               // Start very late in second slide (~4.2s)
+      startFrame: 304,               // Start on third slide (125 + 179)
       moveDuration: 5,               // Instant movement
-      clickAtFrame: 135,             // Click at 4.5s, fully faded by 157
+      clickAtFrame: 314,             // Click on third slide
     }}
   />
 );
@@ -229,17 +229,25 @@ export const EncounterNotesFeature: React.FC = () => (
  * Screenshots: 5
  * Subtitle: "Intelligent Care Pathways"
  * slideDuration: 220 frames (~7.3s) - synced to voiceover timing
- * NOTE: Using FeatureScene instead of FeatureSceneWithCinematicZoom to avoid
- * double browser frame issue with carousel layout
+ * Cinematic Zoom: YES — zoom on third slide (AI compose)
  */
 export const WorkflowAIFeature: React.FC = () => (
-  <FeatureScene
+  <FeatureSceneWithCinematicZoom
     title="Workflow + AI"
     subtitle="Intelligent Care Pathways"
     screenshots={[workflowOverview, workflowNodes, workflowCompose, workflowGenerated, workflowGuardian]}
     layout="carousel"
     durationInFrames={1110}
     slideDuration={220}
+    highlightZoom={{
+      x: 85,              // Far right
+      y: 50,              // Center vertically
+      scale: 1.5,         // Moderate zoom
+      atFrame: 580,       // Start zoom ~4.7 seconds after third slide begins (440 + 140 frames = ~4.7s)
+      holdDuration: 60,   // Hold for 2 seconds
+      exitDuration: 24,   // Smooth exit
+      showCursor: false,  // No cursor
+    }}
   />
 );
 

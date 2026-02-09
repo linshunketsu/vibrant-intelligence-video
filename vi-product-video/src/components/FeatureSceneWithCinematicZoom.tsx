@@ -108,7 +108,7 @@ export const FeatureSceneWithCinematicZoom: React.FC<FeatureSceneWithCinematicZo
   // NOTE: For carousel layouts, cinematic zoom causes clipping issues with side slides
   // So we only use cinematic zoom for single/crossfade layouts, or when explicitly requested
   const useCinematicZoom = highlightZoom && (
-    highlightZoom.preset || layout === "cinematic-zoom" || layout === "crossfade"
+    highlightZoom.preset || layout === "cinematic-zoom" || layout === "crossfade" || layout === "carousel"
   );
 
   return (
