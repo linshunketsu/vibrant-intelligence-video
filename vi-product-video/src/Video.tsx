@@ -289,14 +289,14 @@ const IntroMusic: React.FC = () => {
 };
 
 /**
- * OutroMusic - Uses same raspberrymusic file from 8-second mark
+ * OutroMusic - Uses same raspberrymusic file from 6-second mark
  *
- * The raspberrymusic file is ~14.5 seconds. We start from the 8-second mark
- * (240 frames @ 30fps) to get the later part of the track for the outro.
+ * The raspberrymusic file is ~14.5 seconds. We start from the 6-second mark
+ * (180 frames @ 30fps) to get the energetic part of the track for the outro.
  */
 const OutroMusic: React.FC = () => {
   const frame = useCurrentFrame();
-  const fadeInDuration = 60; // 2 second fade in for smooth transition
+  const fadeInDuration = 45; // 1.5 second fade in for quicker crossfade
 
   let volume = 0.12;
 
@@ -307,8 +307,9 @@ const OutroMusic: React.FC = () => {
     });
   }
 
-  // Start from 8 seconds into the track (240 frames at 30fps)
-  return <Audio src={introOutroMusic} startFrom={240} volume={volume} />;
+  // Start from 6 seconds into the track (180 frames at 30fps)
+  // This point should have active music for smooth transition
+  return <Audio src={introOutroMusic} startFrom={180} volume={volume} />;
 };
 
 /**
@@ -317,13 +318,14 @@ const OutroMusic: React.FC = () => {
  * Timeline:
  * - 0:00 - 0:09: Intro music (logo animation)
  * - 0:05 - 0:09: Crossfade period (2 second overlap)
- * - 0:07 - 4:28: Main music (dashboard shows through features) - LOOPS 2x
- * - 4:28 - 4:38: Outro music (same raspberrymusic from 8s mark)
+ * - 0:07 - 4:27: Main music (dashboard shows through features) - LOOPS 2x
+ * - 4:24 - 4:38: Outro music (same raspberrymusic from 6s mark) - starts EARLY for crossfade
  *
  * The main music track (m4.mp3) is ~150.7 seconds (4522 frames).
- * We need ~263 seconds (7900 frames), so we loop the track twice.
+ * We need ~260 seconds (7800 frames), so we loop the track twice.
  *
- * Outro uses raspberrymusic starting from 8-second mark for smooth transition.
+ * Outro uses raspberrymusic starting from 6-second mark for smooth transition.
+ * Main music fades out starting frame 8040, outro starts at 8040 (during StackedCardsScene).
  */
 const CrossfadeMusic: React.FC = () => {
   // Audio file duration in frames (150.726 seconds * 30fps)
@@ -336,19 +338,19 @@ const CrossfadeMusic: React.FC = () => {
         <IntroMusic />
       </Sequence>
 
-      {/* MAIN CONTENT music (0:05 - 4:30) - LOOPING main track to cover entire duration */}
+      {/* MAIN CONTENT music (0:05 - 4:27) - LOOPING main track to cover entire duration */}
       <LoopingMusicWithFade
         src={soundtrack}
         fadeIn={true}
         fadeOut={true}
-        fadeOutAtGlobalFrame={8090}
+        fadeOutAtGlobalFrame={8040}
         sequenceStartFrame={150}
-        totalDurationInFrames={7940}
+        totalDurationInFrames={7890}
         loopDurationInFrames={AUDIO_LOOP_DURATION}
       />
 
-      {/* OUTRO music (4:28 - 4:38) - starts 2 seconds early for smooth crossfade */}
-      <Sequence from={8090} durationInFrames={260}>
+      {/* OUTRO music (4:24 - 4:38) - starts EARLY during StackedCardsScene for smooth crossfade */}
+      <Sequence from={8040} durationInFrames={310}>
         <OutroMusic />
       </Sequence>
     </>
