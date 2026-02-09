@@ -282,7 +282,7 @@ export const FormBuilderFeature: React.FC = () => (
  * Layout: carousel (~8s per slide)
  * Screenshots: 3
  * Subtitle: "Your Command Center"
- * Cinematic Zoom: YES — zoom into the sentiment analysis or Ask AI button
+ * Cinematic Zoom: YES — zoom into Ask AI button on last slide
  * slideDuration: 240 frames (~8s) - synced to voiceover timing
  */
 export const MyPracticeFeature: React.FC = () => (
@@ -294,10 +294,10 @@ export const MyPracticeFeature: React.FC = () => (
     durationInFrames={740}
     slideDuration={240}
     highlightZoom={{
-      x: 30,              // Left side where the sentiment/analytics are
-      y: 40,              // Upper middle of the dashboard
+      x: 85,              // Far right side where Ask AI button is
+      y: 80,              // Bottom right corner
       preset: "subtle",
-      atFrame: 140,       // Start zoom on first screenshot (~4.7s)
+      atFrame: 500,       // Start zoom on third/last screenshot (240 + 240 + 20 = ~500)
       holdDuration: 120,  // Hold for 4 seconds
     }}
   />
