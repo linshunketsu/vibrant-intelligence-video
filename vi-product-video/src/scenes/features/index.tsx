@@ -89,19 +89,26 @@ export const HealthTabFeature: React.FC = () => (
     layout="crossfade"
     durationInFrames={660}
     showCursor={{
-      startPos: { x: 50, y: 59 }, // At the zoom target (center of health variables)
-      endPos: { x: 50, y: 59 },    // Stay there
-      startFrame: 170,             // Start after zoom begins (second slide is visible)
+      startPos: { x: 38, y: 33 }, // At the zoom target
+      endPos: { x: 38, y: 33 },    // Stay there
+      startFrame: 30,              // Start at the beginning of the scene
       moveDuration: 10,            // Quick move into position
-      clickAtFrame: 190,           // Click during zoom hold
+      clickAtFrame: 50,            // Click early in the scene
+      zoomSync: {
+        atFrame: 0,                // Sync with zoom start
+        zoomDuration: 24,          // Matches "subtle" preset zoom duration
+        minScale: 0.4,             // Start small
+        maxScale: 2.5,             // Grow to match zoom
+      },
     }}
     highlightZoom={{
-      x: 50,              // Center
-      y: 59,              // Slightly below center
-      scale: 2.5,          // Higher zoom level
+      x: 38,              // Zoom target
+      y: 33,              // Zoom target (down 1 from 32)
+      scale: 2.5,         // Higher zoom level
       preset: "subtle",
-      atFrame: 150,       // Start zoom when second screenshot appears (~5s)
-      holdDuration: 120,  // Hold for 4 seconds
+      atFrame: 0,         // Start zoom at the very beginning
+      holdDuration: 34,   // Hold until click finishes (click at 50 + 8 = 58, zoom reaches max at 24, so 58-24=34)
+      exitDuration: 6,    // Very fast zoom out after click
       showCursor: false,  // Disable the built-in cursor, using the manual showCursor instead
     }}
   />

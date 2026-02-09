@@ -43,6 +43,12 @@ export interface CursorAnimation {
   startFrame: number;
   moveDuration: number;
   clickAtFrame?: number | null;
+  zoomSync?: {
+    atFrame: number;
+    zoomDuration: number;
+    minScale?: number;
+    maxScale?: number;
+  };
 }
 
 type ScreenshotLayout = "single" | "carousel" | "crossfade" | "cinematic-zoom";
@@ -240,6 +246,7 @@ const CinematicZoomContent: React.FC<CinematicZoomContentProps> = ({
               startFrame={showCursor.startFrame}
               moveDuration={showCursor.moveDuration}
               clickAtFrame={showCursor.clickAtFrame}
+              zoomSync={showCursor.zoomSync}
             />
           )}
         </div>

@@ -21,6 +21,12 @@ interface AnimatedCursorProps {
   moveDuration?: number; // Frames for movement animation
   clickAtFrame?: number | null; // Frame to perform click (null = no click)
   cursorSize?: number; // Pixels
+  zoomSync?: {
+    atFrame: number; // When zoom starts
+    zoomDuration: number; // How long zoom takes
+    minScale?: number; // Starting scale (default: 0.4)
+    maxScale?: number; // Ending scale (default: 2.5)
+  };
 }
 
 /**
@@ -35,6 +41,7 @@ export const AnimatedCursor: React.FC<AnimatedCursorProps> = ({
   moveDuration = 24,
   clickAtFrame = null,
   cursorSize = 16,
+  zoomSync,
 }) => {
   const frame = useCurrentFrame();
 
@@ -70,6 +77,19 @@ export const AnimatedCursor: React.FC<AnimatedCursorProps> = ({
   let ringScale = 1;
   let ringOpacity = 0;
 
+  // Calculate zoom sync scale (cursor grows as content zooms in)
+  let zoomScale = 1;
+  if (zoomSync) {
+    const { atFrame, zoomDuration, minScale = 0.4, maxScale = 2.5 } = zoomSync;
+    const zoomProgress = Math.min(Math.max((frame - atFrame) / zoomDuration, 0), 1);
+    zoomScale = interpolate(
+      zoomProgress,
+      [0, 1],
+      [minScale, maxScale],
+      { easing: Easing.bezier(0.4, 0, 0.2, 1) }
+    );
+  }
+
   if (clickAtFrame !== null) {
     const clickDuration = 8;
     const framesSinceClick = frame - clickAtFrame;
@@ -88,6 +108,9 @@ export const AnimatedCursor: React.FC<AnimatedCursorProps> = ({
       ringOpacity = interpolate(clickProgress, [0, 0.5, 1], [0, 0.4, 0]);
     }
   }
+
+  // Combined scale: click animation on top of zoom growth
+  const finalScale = scale * zoomScale;
 
   // Fade cursor in on entry, fade out after click (if any)
   let opacity = 1;
@@ -126,20 +149,20 @@ export const AnimatedCursor: React.FC<AnimatedCursorProps> = ({
           position: "absolute",
           left: `${currentX}%`,
           top: `${currentY}%`,
-          transform: `translate(-15%, -15%) scale(${scale})`,
+          transform: `translate(-15%, -15%) scale(${finalScale})`,
           opacity,
           filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2))",
         }}
       />
 
-      {/* Ring ripple on click */}
+      {/* Ring ripple on click - also scales with zoom */}
       {ringOpacity > 0 && (
         <div
           style={{
             position: "absolute",
             left: `${currentX}%`,
             top: `${currentY}%`,
-            transform: `translate(-50%, -50%) scale(${ringScale})`,
+            transform: `translate(-50%, -50%) scale(${ringScale * zoomScale})`,
             width: cursorSize * 1.5,
             height: cursorSize * 1.5,
             borderRadius: "50%",
