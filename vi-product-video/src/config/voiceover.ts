@@ -298,14 +298,21 @@ export const VOICEOVER_CONFIG: SceneVoiceover[] = [
     ],
   },
 
-  // OUTRO (3:18-3:28, 300 frames)
+  // STACKED CARDS: "One Platform, Everything You Need" (4:18-4:23, 150 frames)
+  {
+    sceneId: "stackedCards",
+    sceneName: "Stacked Cards",
+    lines: [
+      { id: "outro-0", audio: outro0, text: "That's Vibrant Intelligence.", startFrame: 20 },
+      { id: "outro-1", audio: outro1, text: "Everything you need.", startFrame: 60 },
+    ],
+  },
+
+  // OUTRO (4:23-4:39, 480 frames) - Logo only, no voiceover
   {
     sceneId: "outro",
     sceneName: "OUTRO",
-    lines: [
-      { id: "outro-0", audio: outro0, text: "That's Vibrant Intelligence: unified communication, instant clinical context, smart scheduling, AI-powered workflows, effortless documentation, and a practice dashboard that actually answers your questions.", startFrame: 30 },
-      { id: "outro-1", audio: outro1, text: "Built for the way you actually work.", startFrame: 230 },
-    ],
+    lines: [],
   },
 ];
 
@@ -346,7 +353,8 @@ export function getAllVoiceoverTracks(): Array<{ audio: string; startFrame: numb
     feature12: 6980,   // 3:53 (180 frames)
     transition2: 7160, // 3:59 (60 frames)
     feature13: 7220,   // 4:00 (780 frames)
-    outro: 8000,       // 4:27 (480 frames)
+    stackedCards: 8000, // 4:27 (150 frames) - "One Platform, Everything You Need"
+    outro: 8150,        // 4:32 (480 frames) - Logo only, no voiceover
   };
 
   // Actual durations for each voiceover line (in frames at 30fps)
@@ -410,8 +418,8 @@ export function getAllVoiceoverTracks(): Array<{ audio: string; startFrame: numb
     "feature13-4": 132,   // 4.39s
     "feature13-5": 137,   // 4.57s
     "feature13-6": 78,   // 2.61s
-    "outro-0": 410,   // 13.66s
-    "outro-1": 59,   // 1.96s
+    "outro-0": 50,   // 1.67s - "That's Vibrant Intelligence."
+    "outro-1": 38,   // 1.28s - "Everything you need."
   };
 
   // Calculate voiceover positions sequentially within each scene
@@ -453,7 +461,8 @@ export const SCENE_START_FRAMES: Record<string, number> = {
   feature12: 6980,   // 3:53 (180 frames)
   transition2: 7160, // 3:59 (60 frames)
   feature13: 7220,   // 4:00 (780 frames)
-  outro: 8000,       // 4:27 (480 frames)
+  stackedCards: 8000, // 4:27 (150 frames) - "One Platform, Everything You Need" with voiceover
+  outro: 8150,        // 4:32 (480 frames) - Logo only, no voiceover
 };
 
 /**
@@ -482,4 +491,4 @@ export const SCENE_DURATIONS: Record<string, number> = {
 /**
  * Total video duration in frames
  */
-export const TOTAL_VIDEO_FRAMES = 8480; // ~4:43 at 30fps (extended from 8230)
+export const TOTAL_VIDEO_FRAMES = 8630; // ~4:48 at 30fps (extended by 150 frames for StackedCardsScene)

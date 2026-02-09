@@ -6,6 +6,7 @@ import { IntroScene } from "./scenes/IntroScene";
 import { FeatureScene } from "./scenes/FeatureScene";
 import { SectionTitleScene } from "./scenes/SectionTitleScene";
 import { ComposerScene } from "./scenes/ComposerScene";
+import { StackedCardsScene } from "./scenes/StackedCardsScene";
 import { OutroScene } from "./scenes/OutroScene";
 import {
   ChatMultichannelFeature,
@@ -48,8 +49,9 @@ import { getAllVoiceoverTracks, SCENE_START_FRAMES, SCENE_DURATIONS, TOTAL_VIDEO
  * FEATURE 12: 3:53 - 3:59 (180 frames, 6s) - Approval Center
  * TRANSITION: 3:59 - 4:00 (60 frames, 2s) - "Coming Soon"
  * FEATURE 13: 4:00 - 4:27 (780 frames, 26s) - Composer (Finale)
- * OUTRO: 4:27 - 4:43 (480 frames, 16s)
- * TOTAL: 4:43 (8480 frames)
+ * STACKED CARDS: 4:27 - 4:32 (150 frames, 5s) - "One Platform, Everything You Need" + outro voiceover
+ * OUTRO: 4:32 - 4:48 (480 frames, 16s) - Logo only, no voiceover
+ * TOTAL: 4:48 (8630 frames)
  */
 
 // Screenshot imports - using actual files from assets/screenshots/
@@ -237,9 +239,9 @@ const OutroMusic: React.FC = () => {
  * Timeline:
  * - 0:00 - 0:07: Intro music (logo animation)
  * - 0:05 - 0:09: Crossfade period (2 second overlap)
- * - 0:07 - 4:25: Main music (dashboard shows through features)
- * - 4:23 - 4:27: Crossfade period (2 second overlap)
- * - 4:25 - 4:43: Outro music
+ * - 0:07 - 4:30: Main music (dashboard shows through features)
+ * - 4:28 - 4:32: Crossfade period (2 second overlap)
+ * - 4:30 - 4:48: Outro music
  */
 const CrossfadeMusic: React.FC = () => {
   return (
@@ -249,13 +251,13 @@ const CrossfadeMusic: React.FC = () => {
         <IntroMusic />
       </Sequence>
 
-      {/* MAIN CONTENT music (0:05 - 4:27) - starts 2 seconds early for smooth crossfade */}
-      <Sequence from={150} durationInFrames={7520}>
+      {/* MAIN CONTENT music (0:05 - 4:30) - starts 2 seconds early for smooth crossfade, ends 2s before outro music starts */}
+      <Sequence from={150} durationInFrames={7620}>
         <MusicWithFade src={soundtrack} fadeIn={true} fadeOut={true} />
       </Sequence>
 
-      {/* OUTRO music (4:27 - 4:43) - starts right when outro scene begins, matches logo slide */}
-      <Sequence from={8000} durationInFrames={480}>
+      {/* OUTRO music (4:30 - 4:48) - starts right when outro scene begins, matches logo slide */}
+      <Sequence from={8150} durationInFrames={480}>
         <OutroMusic />
       </Sequence>
     </>
@@ -419,7 +421,12 @@ export const Video: React.FC = () => {
         />
       </Sequence>
 
-      {/* 4:18 - 4:34   CLOSING / OUTRO (480 frames, 16s) */}
+      {/* 4:18 - 4:23   STACKED CARDS: "One Platform, Everything You Need" (150 frames, 5s) */}
+      <Sequence from={SCENE_START_FRAMES.stackedCards} durationInFrames={150}>
+        <StackedCardsScene />
+      </Sequence>
+
+      {/* 4:23 - 4:39   CLOSING / OUTRO (480 frames, 16s) - Logo only, no voiceover */}
       <Sequence from={SCENE_START_FRAMES.outro} durationInFrames={SCENE_DURATIONS.outro}>
         <OutroScene />
       </Sequence>

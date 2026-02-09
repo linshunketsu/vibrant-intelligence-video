@@ -5,24 +5,32 @@ import logoIcon from "../assets/logo-icon.svg";
 
 /**
  * OutroScene - Closing sequence with logo, tagline, and CTA
- * 3:18 - 3:28 (300 frames)
+ * 4:32 - 4:48 (480 frames)
+ *
+ * Slides up from below to replace StackedCardsScene
  *
  * Timeline:
- * - 0-40: Previous content fades out
- * - 40-80: Logo icon fades in (150×150px)
- * - 80-120: "Vibrant Intelligence" text fades in
- * - 120-160: Tagline fades in
- * - 160-230: Hold
- * - 230-270: CTA fades in
- * - 270-300: Hold to end
+ * - 0-30: Slide up from bottom (covering StackedCardsScene)
+ * - 30-70: Logo icon fades in (150×150px)
+ * - 70-110: "Vibrant Intelligence" text fades in
+ * - 110-150: Tagline fades in
+ * - 150-220: Hold
+ * - 220-260: CTA fades in
+ * - 260-480: Hold to end
  */
 export const OutroScene: React.FC = () => {
   const frame = useCurrentFrame();
 
-  // Fade in content (starts at frame 40)
-  const fadeInStart = 40;
+  // Slide up animation from bottom (0-30 frames)
+  const slideUpY = interpolate(frame, [0, 30], [1080, 0], {
+    easing: Easing.out(Easing.cubic),
+    extrapolateRight: "clamp",
+  });
 
-  // Logo animation (40-80)
+  // Fade in content (starts at frame 30)
+  const fadeInStart = 30;
+
+  // Logo animation (30-70)
   const logoOpacity = interpolate(frame, [fadeInStart, fadeInStart + 20], [0, 1], {
     extrapolateRight: "clamp",
   });
@@ -31,7 +39,7 @@ export const OutroScene: React.FC = () => {
     extrapolateRight: "clamp",
   });
 
-  // Title text fade in (80-120)
+  // Title text fade in (70-110)
   const titleOpacity = interpolate(frame, [fadeInStart + 40, fadeInStart + 60], [0, 1], {
     extrapolateRight: "clamp",
   });
@@ -40,7 +48,7 @@ export const OutroScene: React.FC = () => {
     extrapolateRight: "clamp",
   });
 
-  // Tagline fade in (120-160)
+  // Tagline fade in (110-150)
   const taglineOpacity = interpolate(frame, [fadeInStart + 80, fadeInStart + 100], [0, 1], {
     extrapolateRight: "clamp",
   });
@@ -49,28 +57,40 @@ export const OutroScene: React.FC = () => {
     extrapolateRight: "clamp",
   });
 
-  // CTA fade in (230-270)
-  const ctaOpacity = interpolate(frame, [230, 250], [0, 1], {
+  // CTA fade in (220-260)
+  const ctaOpacity = interpolate(frame, [220, 240], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const ctaScale = interpolate(frame, [230, 270], [0.92, 1], {
+  const ctaScale = interpolate(frame, [220, 260], [0.92, 1], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });
 
   return (
-    <AbsoluteFill style={{ backgroundColor: theme.colors.background }}>
-      {/* Dotted background */}
+    <AbsoluteFill
+      style={{
+        backgroundColor: theme.colors.background,
+      }}
+    >
+      {/* Container that slides up */}
       <div
         style={{
           position: "absolute",
           inset: 0,
-          backgroundImage: `radial-gradient(circle, ${theme.colors.dotGrid} 1px, transparent 1px)`,
-          backgroundSize: "20px 20px",
+          transform: `translateY(${slideUpY}px)`,
         }}
-      />
+      >
+        {/* Dotted background */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage: `radial-gradient(circle, ${theme.colors.dotGrid} 1px, transparent 1px)`,
+            backgroundSize: "20px 20px",
+          }}
+        />
 
-      <AbsoluteFill
+        <AbsoluteFill
         style={{
           display: "flex",
           flexDirection: "column",
@@ -149,6 +169,7 @@ export const OutroScene: React.FC = () => {
           Join Our Beta
         </div>
       </AbsoluteFill>
+      </div>
     </AbsoluteFill>
   );
 };

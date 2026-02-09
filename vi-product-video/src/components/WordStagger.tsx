@@ -17,6 +17,7 @@ interface WordStaggerProps {
   fontFamily?: string;
   textAlign?: "left" | "center" | "right";
   lineHeight?: number;
+  letterSpacing?: string; // CSS letter-spacing value (e.g., "-0.02em")
 }
 
 /**
@@ -47,6 +48,7 @@ export const WordStagger: React.FC<WordStaggerProps> = ({
   fontFamily = theme.fonts.heading,
   textAlign = "center",
   lineHeight = 1.2,
+  letterSpacing,
 }) => {
   const frame = useCurrentFrame();
 
@@ -106,6 +108,7 @@ export const WordStagger: React.FC<WordStaggerProps> = ({
         fontFamily,
         textAlign,
         lineHeight,
+        letterSpacing,
         // Wrap text but maintain word boundaries
         wordWrap: "break-word",
         overflowWrap: "break-word",

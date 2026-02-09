@@ -12,7 +12,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="VIProductDemo"
         component={Video}
-        durationInFrames={TOTAL_VIDEO_FRAMES} // ~4:43 @ 30fps - extended for actual voiceover durations
+        durationInFrames={TOTAL_VIDEO_FRAMES} // ~4:48 @ 30fps - extended for actual voiceover durations + StackedCardsScene
         fps={30}
         width={1920}
         height={1080}

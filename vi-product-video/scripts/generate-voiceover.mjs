@@ -354,12 +354,12 @@ const VOICEOVER_LINES = [
   {
     id: "outro-0",
     filename: "scene-14-outro-0",
-    text: "That's Vibrant Intelligence: unified communication, instant clinical context, smart scheduling, AI-powered workflows, effortless documentation, and a practice dashboard that actually answers your questions.",
+    text: "That's Vibrant Intelligence.",
   },
   {
     id: "outro-1",
     filename: "scene-14-outro-1",
-    text: "Built for the way you actually work.",
+    text: "Everything you need.",
   },
 ];
 
