@@ -333,24 +333,24 @@ const CrossfadeMusic: React.FC = () => {
 
   return (
     <>
-      {/* INTRO music (0:00 - 0:09) - plays during logo animation, fades out over 2 seconds */}
-      <Sequence from={0} durationInFrames={270}>
+      {/* INTRO music (0:00 - 0:06) - plays during logo animation */}
+      <Sequence from={0} durationInFrames={180}>
         <IntroMusic />
       </Sequence>
 
-      {/* MAIN CONTENT music (0:05 - 4:27) - LOOPING main track to cover entire duration */}
+      {/* MAIN CONTENT music (0:04 - 4:14) - LOOPING main track to cover entire duration */}
       <LoopingMusicWithFade
         src={soundtrack}
         fadeIn={true}
         fadeOut={true}
-        fadeOutAtGlobalFrame={8040}
-        sequenceStartFrame={150}
-        totalDurationInFrames={7890}
+        fadeOutAtGlobalFrame={7620}
+        sequenceStartFrame={120}
+        totalDurationInFrames={7500}
         loopDurationInFrames={AUDIO_LOOP_DURATION}
       />
 
-      {/* OUTRO music (4:24 - 4:38) - starts EARLY during StackedCardsScene for smooth crossfade */}
-      <Sequence from={8040} durationInFrames={310}>
+      {/* OUTRO music (4:10 - 4:24) - starts EARLY during StackedCardsScene for smooth crossfade */}
+      <Sequence from={7380} durationInFrames={420}>
         <OutroMusic />
       </Sequence>
     </>

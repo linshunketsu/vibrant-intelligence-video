@@ -8,77 +8,77 @@ import introDashboard from "../assets/screenshots/intro-dashboard.png";
 
 /**
  * IntroScene - Opening sequence with logo, tagline, and dashboard flash
- * 0:00 - 0:23 (700 frames) - Extended for voiceover
+ * 0:00 - 0:21 (630 frames) - Extended for voiceover completion
  *
  * Timeline:
- * - 0-15: Background fades in
- * - 15-40: Logo icon fades in (120×120px, scale 0.9→1)
- * - 40-70: "Vibrant Intelligence" text fades in
- * - 70-100: Tagline slides up
- * - 100-130: "13 Features" badge animates in
- * - 130-200: Hold
- * - 200-400: Crossfade to dashboard screenshot
- * - 220-660: Voiceover plays (while dashboard is visible)
- * - 650-700: Transition out
+ * - 0-10: Background fades in
+ * - 5-25: Logo icon fades in (120×120px, scale 0.9→1)
+ * - 20-45: "Vibrant Intelligence" text fades in
+ * - 40-65: Tagline slides up
+ * - 60-85: "13 Features" badge animates in
+ * - 85-130: Brief hold
+ * - 130-160: Crossfade to dashboard screenshot
+ * - 160-610: Voiceover plays (while dashboard is visible)
+ * - 610-630: Transition out
  */
 export const IntroScene: React.FC = () => {
   const frame = useCurrentFrame();
 
-  // Background fade in (0-15)
-  const bgOpacity = interpolate(frame, [0, 15], [0, 1], {
+  // Background fade in (0-10)
+  const bgOpacity = interpolate(frame, [0, 10], [0, 1], {
     extrapolateRight: "clamp",
   });
 
-  // Logo animation (15-40)
-  const logoOpacity = interpolate(frame, [15, 25], [0, 1], {
+  // Logo animation (5-25)
+  const logoOpacity = interpolate(frame, [5, 15], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const logoScale = interpolate(frame, [15, 40], [0.9, 1], {
+  const logoScale = interpolate(frame, [5, 25], [0.9, 1], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });
 
-  // Title text fade in (40-70)
-  const titleOpacity = interpolate(frame, [40, 55], [0, 1], {
+  // Title text fade in (20-45)
+  const titleOpacity = interpolate(frame, [20, 32], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const titleScale = interpolate(frame, [40, 70], [0.95, 1], {
+  const titleScale = interpolate(frame, [20, 45], [0.95, 1], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });
 
-  // Tagline slide up (70-100)
-  const taglineOpacity = interpolate(frame, [70, 85], [0, 1], {
+  // Tagline slide up (40-65)
+  const taglineOpacity = interpolate(frame, [40, 52], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const taglineY = interpolate(frame, [70, 100], [20, 0], {
+  const taglineY = interpolate(frame, [40, 65], [20, 0], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });
 
-  // Badge animation (100-130)
-  const badgeOpacity = interpolate(frame, [100, 115], [0, 1], {
+  // Badge animation (60-85)
+  const badgeOpacity = interpolate(frame, [60, 72], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const badgeScale = interpolate(frame, [100, 130], [0.85, 1], {
+  const badgeScale = interpolate(frame, [60, 85], [0.85, 1], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });
 
-  // Dashboard crossfade (200-400)
-  const brandingOpacity = interpolate(frame, [200, 230], [1, 0], {
+  // Dashboard crossfade (130-160)
+  const brandingOpacity = interpolate(frame, [130, 160], [1, 0], {
     extrapolateRight: "clamp",
   });
-  const dashboardOpacity = interpolate(frame, [200, 230], [0, 1], {
+  const dashboardOpacity = interpolate(frame, [130, 160], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const dashboardScale = interpolate(frame, [200, 250], [0.92, 1], {
+  const dashboardScale = interpolate(frame, [130, 170], [0.92, 1], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });
 
-  // Transition out (650-700)
-  const outroOpacity = interpolate(frame, [650, 700], [1, 0], {
+  // Transition out (610-630)
+  const outroOpacity = interpolate(frame, [610, 630], [1, 0], {
     extrapolateRight: "clamp",
   });
 

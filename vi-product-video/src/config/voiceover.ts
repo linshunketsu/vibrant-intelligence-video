@@ -113,13 +113,13 @@ export interface SceneVoiceover {
  */
 export const VOICEOVER_CONFIG: SceneVoiceover[] = [
   // INTRO - Logo animation + Dashboard flash (450 frames = 15s)
-  // Voiceover starts when dashboard appears at frame 200
+  // Voiceover starts when dashboard appears at frame 160
   {
     sceneId: "intro",
     sceneName: "INTRO",
     lines: [
-      { id: "intro-0", audio: intro_0, text: "Running a modern practice means juggling patient care, communication, scheduling, and documentation—all at once.", startFrame: 220 },
-      { id: "intro-1", audio: intro_1, text: "What if your EHR actually helped instead of getting in the way?", startFrame: 420 },
+      { id: "intro-0", audio: intro_0, text: "Running a modern practice means juggling patient care, communication, scheduling, and documentation—all at once.", startFrame: 180 },
+      { id: "intro-1", audio: intro_1, text: "What if your EHR actually helped instead of getting in the way?", startFrame: 0 }, // Will be calculated sequentially
       { id: "intro-2", audio: intro_2, text: "Meet Vibrant Intelligence: an AI-powered platform built for how clinics actually work.", startFrame: 0 }, // Will be calculated sequentially
     ],
   },
@@ -129,10 +129,10 @@ export const VOICEOVER_CONFIG: SceneVoiceover[] = [
     sceneId: "feature1",
     sceneName: "Chat + SMS + Email",
     lines: [
-      { id: "feature1-0", audio: feature1_0, text: "First up: unified communication.", startFrame: 20 },
-      { id: "feature1-1", audio: feature1_1, text: "Text messages, emails, and chat—all in one interface.", startFrame: 60 },
-      { id: "feature1-2", audio: feature1_2, text: "No more switching between apps.", startFrame: 140 },
-      { id: "feature1-3", audio: feature1_3, text: "Every interaction with a patient lives in one place, so your team always has the full picture.", startFrame: 180 },
+      { id: "feature1-0", audio: feature1_0, text: "First up: unified communication.", startFrame: 10 }, // Small delay after scene starts
+      { id: "feature1-1", audio: feature1_1, text: "Text messages, emails, and chat—all in one interface.", startFrame: 0 }, // Calculated sequentially
+      { id: "feature1-2", audio: feature1_2, text: "No more switching between apps.", startFrame: 0 }, // Calculated sequentially
+      { id: "feature1-3", audio: feature1_3, text: "Every interaction with a patient lives in one place, so your team always has the full picture.", startFrame: 0 }, // Calculated sequentially
     ],
   },
 
@@ -335,26 +335,26 @@ export function getVoiceoverForScene(sceneId: string): SceneVoiceover | undefine
 export function getAllVoiceoverTracks(): Array<{ audio: string; startFrame: number; durationInFrames: number }> {
   const tracks: Array<{ audio: string; startFrame: number; durationInFrames: number }> = [];
 
-  // NEW Scene start frames - extended to accommodate actual voiceover durations
+  // Scene start frames - extended intro (630 frames = 21s)
   const sceneStartFrames: Record<string, number> = {
-    intro: 0,          // 0:00 (700 frames - extended for voiceover)
-    feature1: 700,     // 0:23 (420 frames)
-    feature2: 1120,    // 0:37 (660 frames)
-    feature3: 1780,    // 0:59 (660 frames)
-    feature4: 2440,    // 1:21 (400 frames)
-    feature5: 2840,    // 1:35 (500 frames)
-    feature6: 3340,    // 1:51 (750 frames)
-    feature7: 4090,    // 2:16 (1110 frames)
-    feature8: 5200,    // 2:53 (620 frames)
-    feature9: 5820,    // 3:14 (740 frames)
-    transition1: 6560, // 3:39 (120 frames)
-    feature10: 6680,   // 3:43 (150 frames)
-    feature11: 6830,   // 3:48 (150 frames)
-    feature12: 6980,   // 3:53 (180 frames)
-    transition2: 7160, // 3:59 (60 frames)
-    feature13: 7220,   // 4:00 (780 frames)
-    stackedCards: 8000, // 4:27 (110 frames) - "One Platform, Everything You Need"
-    outro: 8110,        // 4:30 (240 frames, 8s) - Logo only, no voiceover
+    intro: 0,          // 0:00 (630 frames - extended for voiceover)
+    feature1: 630,     // 0:21 (420 frames)
+    feature2: 1050,    // 0:35 (660 frames)
+    feature3: 1710,    // 0:57 (660 frames)
+    feature4: 2370,    // 1:19 (400 frames)
+    feature5: 2770,    // 1:32 (500 frames)
+    feature6: 3270,    // 1:49 (750 frames)
+    feature7: 4020,    // 2:14 (1110 frames)
+    feature8: 5130,    // 2:51 (620 frames)
+    feature9: 5750,    // 3:11 (740 frames)
+    transition1: 6490, // 3:36 (120 frames)
+    feature10: 6610,   // 3:40 (150 frames)
+    feature11: 6760,   // 3:45 (150 frames)
+    feature12: 6910,   // 3:50 (180 frames)
+    transition2: 7090, // 3:56 (60 frames)
+    feature13: 7150,   // 3:58 (780 frames)
+    stackedCards: 7930, // 4:24 (110 frames) - "One Platform, Everything You Need"
+    outro: 8040,        // 4:28 (240 frames, 8s) - Logo only, no voiceover
   };
 
   // Actual durations for each voiceover line (in frames at 30fps)
@@ -445,31 +445,31 @@ export function getAllVoiceoverTracks(): Array<{ audio: string; startFrame: numb
  * Export the new scene start frames for use in Video.tsx
  */
 export const SCENE_START_FRAMES: Record<string, number> = {
-  intro: 0,          // 0:00 (700 frames - extended for voiceover)
-  feature1: 700,     // 0:23 (420 frames)
-  feature2: 1120,    // 0:37 (660 frames)
-  feature3: 1780,    // 0:59 (660 frames)
-  feature4: 2440,    // 1:21 (400 frames)
-  feature5: 2840,    // 1:35 (500 frames)
-  feature6: 3340,    // 1:51 (750 frames)
-  feature7: 4090,    // 2:16 (1110 frames)
-  feature8: 5200,    // 2:53 (620 frames)
-  feature9: 5820,    // 3:14 (740 frames)
-  transition1: 6560, // 3:39 (120 frames)
-  feature10: 6680,   // 3:43 (150 frames)
-  feature11: 6830,   // 3:48 (150 frames)
-  feature12: 6980,   // 3:53 (180 frames)
-  transition2: 7160, // 3:59 (60 frames)
-  feature13: 7220,   // 4:00 (780 frames)
-  stackedCards: 8000, // 4:27 (110 frames) - "One Platform, Everything You Need" with voiceover
-  outro: 8110,        // 4:30 (240 frames, 8s) - Logo only, no voiceover
+  intro: 0,          // 0:00 (630 frames - extended for voiceover)
+  feature1: 630,     // 0:21 (420 frames)
+  feature2: 1050,    // 0:35 (660 frames)
+  feature3: 1710,    // 0:57 (660 frames)
+  feature4: 2370,    // 1:19 (400 frames)
+  feature5: 2770,    // 1:32 (500 frames)
+  feature6: 3270,    // 1:49 (750 frames)
+  feature7: 4020,    // 2:14 (1110 frames)
+  feature8: 5130,    // 2:51 (620 frames)
+  feature9: 5750,    // 3:11 (740 frames)
+  transition1: 6490, // 3:36 (120 frames)
+  feature10: 6610,   // 3:40 (150 frames)
+  feature11: 6760,   // 3:45 (150 frames)
+  feature12: 6910,   // 3:50 (180 frames)
+  transition2: 7090, // 3:56 (60 frames)
+  feature13: 7150,   // 3:58 (780 frames)
+  stackedCards: 7930, // 4:24 (110 frames) - "One Platform, Everything You Need" with voiceover
+  outro: 8040,        // 4:28 (240 frames, 8s) - Logo only, no voiceover
 };
 
 /**
  * Export the new scene durations for use in Video.tsx
  */
 export const SCENE_DURATIONS: Record<string, number> = {
-  intro: 700,        // 23.3s - extended for voiceover
+  intro: 630,        // 21s - extended for voiceover completion
   feature1: 420,     // 14s
   feature2: 660,     // 22s
   feature3: 660,     // 22s
@@ -491,4 +491,4 @@ export const SCENE_DURATIONS: Record<string, number> = {
 /**
  * Total video duration in frames
  */
-export const TOTAL_VIDEO_FRAMES = 8350; // ~4:38 at 30fps (110 frames for StackedCardsScene, 240 frames for Outro)
+export const TOTAL_VIDEO_FRAMES = 8280; // ~4:36 at 30fps
