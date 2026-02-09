@@ -217,13 +217,26 @@ const CinematicZoomContent: React.FC<CinematicZoomContentProps> = ({
   // Don't wrap in additional BrowserMockup to avoid duplicate chrome
   if (layout === "carousel" && screenshots.length >= 2) {
     return (
-      <CinematicZoomHighlight {...zoomProps} scale={highlightZoom.scale || 2}>
-        <Carousel
-          items={screenshots.map((src) => ({ image: src }))}
-          slideDuration={slideDuration || 75}
-          transitionDuration={18}
-        />
-      </CinematicZoomHighlight>
+      <>
+        <CinematicZoomHighlight {...zoomProps} scale={highlightZoom.scale || 2}>
+          <Carousel
+            items={screenshots.map((src) => ({ image: src }))}
+            slideDuration={slideDuration || 75}
+            transitionDuration={18}
+          />
+        </CinematicZoomHighlight>
+        {/* Standalone cursor for carousel - only if showCursor prop is provided */}
+        {showCursor && (
+          <AnimatedCursor
+            startPos={showCursor.startPos}
+            endPos={showCursor.endPos}
+            startFrame={showCursor.startFrame}
+            moveDuration={showCursor.moveDuration}
+            clickAtFrame={showCursor.clickAtFrame}
+            zoomSync={showCursor.zoomSync}
+          />
+        )}
+      </>
     );
   }
 

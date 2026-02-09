@@ -2,10 +2,11 @@ import React from "react";
 import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from "remotion";
 import { easing, theme } from "../styles/theme";
 import logoIcon from "../assets/logo-icon.svg";
+import { AnimatedCursor } from "../components/AnimatedCursor";
 
 /**
  * OutroScene - Closing sequence with logo, tagline, and CTA
- * 4:30 - 4:38 (240 frames = 8 seconds)
+ * 4:28 - 4:32 (130 frames = 4.3s)
  *
  * Slides up from below to replace StackedCardsScene
  *
@@ -14,8 +15,9 @@ import logoIcon from "../assets/logo-icon.svg";
  * - 15-35: Logo icon fades in (150×150px)
  * - 25-50: "Vibrant Intelligence" text fades in
  * - 40-65: Tagline fades in
- * - 60-90: CTA fades in
- * - 90-240: Hold to end
+ * - 60-80: CTA fades in
+ * - 80-88: Cursor moves in from left and clicks on CTA button (global frame 8120)
+ * - 88-130: Hold to end
  */
 export const OutroScene: React.FC = () => {
   const frame = useCurrentFrame();
@@ -56,14 +58,23 @@ export const OutroScene: React.FC = () => {
     extrapolateRight: "clamp",
   });
 
-  // CTA fade in (60-90) - comes in quickly after tagline
+  // CTA fade in (60-80) - faster for the shorter outro
   const ctaOpacity = interpolate(frame, [60, 75], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const ctaScale = interpolate(frame, [60, 90], [0.92, 1], {
+  const ctaScale = interpolate(frame, [60, 80], [0.92, 1], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });
+
+  // CTA button highlight pulse on click (frame 80-88)
+  const clickFrame = 80;
+  const ctaClickScale = interpolate(
+    frame,
+    [clickFrame - 5, clickFrame, clickFrame + 8],
+    [1, 0.95, 1],
+    { extrapolateRight: "clamp", easing: Easing.bezier(...easing.material) }
+  );
 
   return (
     <AbsoluteFill
@@ -90,85 +101,96 @@ export const OutroScene: React.FC = () => {
         />
 
         <AbsoluteFill
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        {/* Logo icon */}
-        <div
           style={{
-            opacity: logoOpacity,
-            transform: `scale(${logoScale})`,
-            marginBottom: 40,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <img
-            src={logoIcon}
-            alt="Vibrant Intelligence"
+          {/* Logo icon */}
+          <div
             style={{
-              width: 150,
-              height: 150,
+              opacity: logoOpacity,
+              transform: `scale(${logoScale})`,
+              marginBottom: 40,
             }}
-          />
-        </div>
+          >
+            <img
+              src={logoIcon}
+              alt="Vibrant Intelligence"
+              style={{
+                width: 150,
+                height: 150,
+              }}
+            />
+          </div>
 
-        {/* Title */}
-        <div
-          style={{
-            opacity: titleOpacity,
-            transform: `scale(${titleScale})`,
-            fontSize: 80,
-            fontWeight: 800,
-            color: theme.colors.accent,
-            fontFamily: theme.fonts.heading,
-            letterSpacing: "-0.02em",
-            textAlign: "center",
-          }}
-        >
-          Vibrant Intelligence
-        </div>
+          {/* Title */}
+          <div
+            style={{
+              opacity: titleOpacity,
+              transform: `scale(${titleScale})`,
+              fontSize: 80,
+              fontWeight: 800,
+              color: theme.colors.accent,
+              fontFamily: theme.fonts.heading,
+              letterSpacing: "-0.02em",
+              textAlign: "center",
+            }}
+          >
+            Vibrant Intelligence
+          </div>
 
-        {/* Tagline */}
-        <div
-          style={{
-            opacity: taglineOpacity,
-            transform: `translateY(${taglineY}px)`,
-            fontSize: 28,
-            fontWeight: 500,
-            color: theme.colors.textSecondary,
-            fontFamily: theme.fonts.body,
-            marginTop: 16,
-            textAlign: "center",
-          }}
-        >
-          Built for the way you actually work
-        </div>
+          {/* Tagline */}
+          <div
+            style={{
+              opacity: taglineOpacity,
+              transform: `translateY(${taglineY}px)`,
+              fontSize: 28,
+              fontWeight: 500,
+              color: theme.colors.textSecondary,
+              fontFamily: theme.fonts.body,
+              marginTop: 16,
+              textAlign: "center",
+            }}
+          >
+            Built for the way you actually work
+          </div>
 
-        {/* CTA */}
-        <div
-          style={{
-            opacity: ctaOpacity,
-            transform: `scale(${ctaScale})`,
-            marginTop: 48,
-            padding: "14px 32px",
-            backgroundColor: "transparent",
-            color: theme.colors.accentLight,
-            fontSize: 24,
-            fontWeight: 700,
-            borderRadius: theme.borderRadius.button,
-            fontFamily: theme.fonts.heading,
-            letterSpacing: "0.02em",
-            border: `2px solid ${theme.colors.accentLight}`,
-            cursor: "pointer",
-          }}
-        >
-          Join Our Beta
-        </div>
-      </AbsoluteFill>
+          {/* CTA - with click animation at frame 80 (global frame 8120) */}
+          <div
+            style={{
+              opacity: ctaOpacity,
+              transform: `scale(${ctaScale * (frame >= clickFrame - 5 && frame <= clickFrame + 8 ? ctaClickScale : 1)})`,
+              marginTop: 48,
+              padding: "14px 32px",
+              backgroundColor: frame >= clickFrame ? theme.colors.accent : "transparent",
+              color: frame >= clickFrame ? theme.colors.card : theme.colors.accentLight,
+              fontSize: 24,
+              fontWeight: 700,
+              borderRadius: theme.borderRadius.button,
+              fontFamily: theme.fonts.heading,
+              letterSpacing: "0.02em",
+              border: `2px solid ${theme.colors.accentLight}`,
+              cursor: "pointer",
+              transition: "background-color 0.2s, color 0.2s",
+            }}
+          >
+            Join Our Beta
+          </div>
+        </AbsoluteFill>
       </div>
+
+      {/* Cursor animation - moves from bottom right to click CTA button at frame 80 (global frame 8120) */}
+      <AnimatedCursor
+        startPos={{ x: 75, y: 85 }} // Start from bottom right
+        endPos={{ x: 50, y: 68 }} // End at center of CTA button
+        startFrame={70} // Start moving at frame 70
+        moveDuration={10} // Take 10 frames to reach the button
+        clickAtFrame={80} // Click at frame 80 (global frame 8120)
+        cursorSize={20}
+      />
     </AbsoluteFill>
   );
 };

@@ -22,7 +22,6 @@ interface ComposerSceneProps {
  * Special treatment:
  * - fullScreen: true — fills entire viewport, no floating card, no dotted bg
  * - This is the ONE full-screen takeover (like Manus Scene 6) — creates dramatic contrast
- * - "Coming Soon" badge floats top-right with subtle pulse animation
  * - Enhanced radial teal glow (#8BBDC7) at edges for intentional full-screen feel
  * - Carousel layout for screenshots with slower transitions (25 frames instead of 20)
  * - Cursor animation interacting with composer input
@@ -90,25 +89,6 @@ export const ComposerScene: React.FC<ComposerSceneProps> = ({ screenshots }) => 
     { easing: Easing.bezier(...easing.material) }
   );
 
-  // "Coming Soon" badge fade in (slightly delayed)
-  const badgeOpacity = interpolate(
-    Math.min(Math.max(frame - 15, 0), 15),
-    [0, 15],
-    [0, 1],
-    { easing: Easing.bezier(...easing.material) }
-  );
-
-  // Subtle pulse animation for "Coming Soon" badge
-  // Very gentle: scale 1 → 1.02 → 1 on loop
-  const pulseCycle = 90; // 3 seconds per pulse cycle
-  const pulseProgress = (frame % pulseCycle) / pulseCycle;
-  const pulseScale = interpolate(
-    pulseProgress,
-    [0, 0.5, 1],
-    [1, 1.02, 1],
-    { easing: Easing.bezier(0.4, 0, 0.2, 1) }
-  );
-
   // Feature name fade in (delayed more)
   const titleOpacity = interpolate(
     Math.min(Math.max(frame - 20, 0), 15),
@@ -159,27 +139,6 @@ export const ComposerScene: React.FC<ComposerSceneProps> = ({ screenshots }) => 
             sidePeekWidth={5}
           />
         </div>
-      </div>
-
-      {/* "Coming Soon" badge - top right with pulse animation */}
-      <div
-        style={{
-          position: "absolute",
-          top: 60,
-          right: 60,
-          padding: "12px 24px",
-          backgroundColor: theme.colors.accent,
-          color: theme.colors.card,
-          fontSize: 18,
-          fontWeight: 600,
-          fontFamily: theme.fonts.body,
-          borderRadius: theme.borderRadius.button,
-          opacity: badgeOpacity,
-          transform: `scale(${pulseScale})`,
-          transformOrigin: "center",
-        }}
-      >
-        Coming Soon
       </div>
 
       {/* Feature name at bottom left */}

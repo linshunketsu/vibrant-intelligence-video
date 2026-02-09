@@ -61,15 +61,26 @@ import composerDocument from "../../assets/screenshots/composer-document.png";
  * Screenshots: 3
  * Subtitle: "Unified Communication"
  * slideDuration: 125 frames (~4.2s) - synced to voiceover timing
+ * Cinematic Zoom: YES — moderate zoom on first slide
  */
 export const ChatMultichannelFeature: React.FC = () => (
-  <FeatureScene
+  <FeatureSceneWithCinematicZoom
     title="Chat + SMS + Email"
     subtitle="Unified Communication"
     screenshots={[chatInbox, chatThread, chatTypes]}
     layout="carousel"
     durationInFrames={420}
     slideDuration={125}
+    highlightZoom={{
+      x: 50,              // Center horizontally
+      y: 45,              // Slightly above center
+      scale: 1.4,         // Moderate zoom
+      preset: "subtle",
+      atFrame: 30,         // Start zoom after content appears
+      holdDuration: 60,   // Hold for 2 seconds
+      exitDuration: 24,    // Smooth exit
+      showCursor: false,  // No cursor
+    }}
   />
 );
 
@@ -300,12 +311,11 @@ export const MyPracticeFeature: React.FC = () => (
       preset: "subtle",
       atFrame: 500,       // Start zoom on third/last screenshot (240 + 240 + 20 = ~500)
       holdDuration: 120,  // Hold for 4 seconds
-      showCursor: true,    // Enable cursor animation
-      cursorStartOffset: { x: 95, y: 80 },  // Cursor starts at far right
+      showCursor: false,   // Disable built-in cursor - using standalone showCursor instead
     }}
     showCursor={{
-      startPos: { x: 85, y: 85 },   // Start at right side, moved down
-      endPos: { x: 25, y: 85 },      // Move far left to point at Ask AI button, same Y level
+      startPos: { x: 130, y: 92 },   // Start far off-screen to the right, at bottom
+      endPos: { x: 70, y: 85 },       // Move to the right side, slightly up
       startFrame: 520,               // Start cursor movement after zoom begins
       moveDuration: 40,              // Smooth movement across
       clickAtFrame: 555,             // Click on Ask AI button

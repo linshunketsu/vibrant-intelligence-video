@@ -17,12 +17,12 @@ interface ChaosCard {
 /**
  * ChaosTextThrow - Chaotic card throw animation for intro scene
  *
- * Shows 25 real-world practice management tasks being "thrown" onto screen
+ * Shows 31 real-world practice management tasks being "thrown" onto screen
  * to depict the messiness/overwhelm of running a modern practice.
  *
  * Animation:
  * - Cards fly in rapidly from random off-screen positions
- * - One-by-one rapid-fire sequence (8-12 frames between cards)
+ * - One-by-one rapid-fire sequence (6-9 frames between cards)
  * - Aggressive throw with fast entrance and snappy deceleration
  * - Cards pile up chaotically - NO floating drift
  * - Continuous cross-out line starts at local frame 240 (global 380)
@@ -78,6 +78,14 @@ export const ChaosTextThrow: React.FC<{
       { text: "order tracking", color: theme.colors.textSecondary, endX: 82, endY: 28 },
       { text: "document signing", color: theme.colors.accentLight, endX: 38, endY: 92 },
       { text: "care plans", color: theme.colors.accent, endX: 68, endY: 78 },
+
+      // Additional chaos cards
+      { text: "medical records", color: theme.colors.accentLight, endX: 5, endY: 72 },
+      { text: "supply orders", color: theme.colors.textSecondary, endX: 92, endY: 12 },
+      { text: "recall lists", color: theme.colors.accent, endX: 48, endY: 5 },
+      { text: "prior approvals", color: theme.colors.accentLight, endX: 72, endY: 92 },
+      { text: "schedule blocks", color: theme.colors.textSecondary, endX: 8, endY: 30 },
+      { text: "peer reviews", color: theme.colors.accent, endX: 95, endY: 65 },
     ];
 
     // Add random properties for chaos effect
@@ -94,8 +102,8 @@ export const ChaosTextThrow: React.FC<{
       // More dramatic rotation (-45 to +45 degrees)
       const rotation = ((seed % 1) - 0.5) * 90;
 
-      // Slower stagger to spread out the throwing over more time (8-12 frames between cards)
-      const delay = index * 8 + Math.floor((seed % 1) * 4);
+      // Faster stagger to accommodate more cards (6-9 frames between cards)
+      const delay = index * 6 + Math.floor((seed % 1) * 3);
 
       return {
         ...card,

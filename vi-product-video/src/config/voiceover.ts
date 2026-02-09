@@ -274,12 +274,12 @@ export const VOICEOVER_CONFIG: SceneVoiceover[] = [
     ],
   },
 
-  // TRANSITION: Coming Soon (2:58-3:01, 90 frames)
+  // TRANSITION: "Hold tight..." (text) / "Something even cooler?" (voiceover)
   {
     sceneId: "transition2",
-    sceneName: "Coming Soon",
+    sceneName: "Hold tight...",
     lines: [
-      { id: "transition2-0", audio: transition2, text: "Coming soon.", startFrame: 20 },
+      { id: "transition2-0", audio: transition2, text: "Something even cooler?", startFrame: 20 },
     ],
   },
 
@@ -410,7 +410,7 @@ export function getAllVoiceoverTracks(): Array<{ audio: string; startFrame: numb
     "feature11-0": 96,   // 3.19s
     "feature12-0": 66,   // 2.19s
     "feature12-1": 89,   // 2.95s
-    "transition2-0": 30,   // 0.99s
+    "transition2-0": 45,   // 1.5s - "Something even cooler?"
     "feature13-0": 146,   // 4.86s
     "feature13-1": 112,   // 3.74s
     "feature13-2": 74,   // 2.48s
@@ -459,10 +459,10 @@ export const SCENE_START_FRAMES: Record<string, number> = {
   feature10: 6610,   // 3:40 (150 frames)
   feature11: 6760,   // 3:45 (150 frames)
   feature12: 6910,   // 3:50 (180 frames)
-  transition2: 7090, // 3:56 (60 frames)
-  feature13: 7150,   // 3:58 (780 frames)
-  stackedCards: 7930, // 4:24 (110 frames) - "One Platform, Everything You Need" with voiceover
-  outro: 8040,        // 4:28 (240 frames, 8s) - Logo only, no voiceover
+  transition2: 7090, // 3:56 (75 frames) - extended for new voiceover
+  feature13: 7165,   // 3:59 (780 frames)
+  stackedCards: 7945, // 4:26 (110 frames) - "One Platform, Everything You Need" with voiceover
+  outro: 8055,        // 4:29 (130 frames, 4.3s) - Logo only, no voiceover
 };
 
 /**
@@ -483,12 +483,12 @@ export const SCENE_DURATIONS: Record<string, number> = {
   feature10: 150,    // 5s
   feature11: 150,    // 5s
   feature12: 180,    // 6s
-  transition2: 60,   // 2s
+  transition2: 75,   // 2.5s - extended for new voiceover
   feature13: 780,    // 26s
-  outro: 240,        // 8s
+  outro: 130,        // 4.3s - faster outro
 };
 
 /**
  * Total video duration in frames
  */
-export const TOTAL_VIDEO_FRAMES = 8280; // ~4:36 at 30fps
+export const TOTAL_VIDEO_FRAMES = 8185; // ~4:33 at 30fps (extended by 15 frames for transition2)

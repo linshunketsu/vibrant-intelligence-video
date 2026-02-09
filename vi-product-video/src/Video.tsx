@@ -26,7 +26,7 @@ import { getAllVoiceoverTracks, SCENE_START_FRAMES, SCENE_DURATIONS, TOTAL_VIDEO
 
 /**
  * Vibrant Intelligence Product Video
- * Total: ~4:38 (8350 frames @ 30fps)
+ * Total: ~4:33 (8185 frames @ 30fps)
  *
  * Extended to accommodate actual voiceover durations.
  * Intro scene includes voiceover starting when dashboard appears.
@@ -47,11 +47,11 @@ import { getAllVoiceoverTracks, SCENE_START_FRAMES, SCENE_DURATIONS, TOTAL_VIDEO
  * FEATURE 10: 3:43 - 3:48 (150 frames, 5s) - Encounter Collaborate
  * FEATURE 11: 3:48 - 3:53 (150 frames, 5s) - Encounter Sign
  * FEATURE 12: 3:53 - 3:59 (180 frames, 6s) - Approval Center
- * TRANSITION: 3:59 - 4:00 (60 frames, 2s) - "Coming Soon"
+ * TRANSITION: 3:59 - 4:00 (75 frames, 2.5s) - "Something even cooler?"
  * FEATURE 13: 4:00 - 4:27 (780 frames, 26s) - Composer (Finale)
- * STACKED CARDS: 4:27 - 4:30 (110 frames, 3.7s) - "One Platform, Everything You Need" + outro voiceover
- * OUTRO: 4:30 - 4:38 (240 frames, 8s) - Logo only, no voiceover
- * TOTAL: 4:38 (8350 frames)
+ * STACKED CARDS: 4:26 - 4:30 (110 frames, 3.7s) - "One Platform, Everything You Need" + outro voiceover
+ * OUTRO: 4:29 - 4:33 (130 frames, 4.3s) - Logo only, no voiceover
+ * TOTAL: 4:33 (8185 frames)
  */
 
 // Screenshot imports - using actual files from assets/screenshots/
@@ -251,7 +251,7 @@ const MusicLoopVolume: React.FC<{
           frame,
           [fadeOutStartInThisLoop, fadeOutStartInThisLoop + fadeOutDuration],
           [0.08, 0],
-          { extrapolateLeft: "clamp" }
+          { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
         );
       }
     } else if (fadeOutStartInThisLoop < 0) {
@@ -296,7 +296,7 @@ const IntroMusic: React.FC = () => {
  */
 const OutroMusic: React.FC = () => {
   const frame = useCurrentFrame();
-  const fadeInDuration = 45; // 1.5 second fade in for quicker crossfade
+  const fadeInDuration = 60; // 2 second fade in for smooth crossfade with main music
 
   let volume = 0.12;
 
@@ -316,16 +316,16 @@ const OutroMusic: React.FC = () => {
  * CrossfadeMusic - Handles smooth transitions between music tracks
  *
  * Timeline:
- * - 0:00 - 0:09: Intro music (logo animation)
- * - 0:05 - 0:09: Crossfade period (2 second overlap)
- * - 0:07 - 4:27: Main music (dashboard shows through features) - LOOPS 2x
- * - 4:24 - 4:38: Outro music (same raspberrymusic from 6s mark) - starts EARLY for crossfade
+ * - 0:00 - 0:06: Intro music (logo animation)
+ * - 0:05 - 0:06: Crossfade period (1 second overlap)
+ * - 0:04 - 4:28: Main music (dashboard shows through features) - LOOPS 2x
+ * - 4:27 - 4:32: Outro music (same raspberrymusic from 6s mark) - 2-second crossfade
  *
  * The main music track (m4.mp3) is ~150.7 seconds (4522 frames).
- * We need ~260 seconds (7800 frames), so we loop the track twice.
+ * Total video is now ~272 seconds (8170 frames), loop the track twice.
  *
  * Outro uses raspberrymusic starting from 6-second mark for smooth transition.
- * Main music fades out starting frame 8040, outro starts at 8040 (during StackedCardsScene).
+ * Main music fades out starting frame 7980, outro starts at 7980 (2-second crossfade).
  */
 const CrossfadeMusic: React.FC = () => {
   // Audio file duration in frames (150.726 seconds * 30fps)
@@ -338,19 +338,19 @@ const CrossfadeMusic: React.FC = () => {
         <IntroMusic />
       </Sequence>
 
-      {/* MAIN CONTENT music (0:04 - 4:14) - LOOPING main track to cover entire duration */}
+      {/* MAIN CONTENT music (0:04 - 4:26) - LOOPING main track to cover entire duration */}
       <LoopingMusicWithFade
         src={soundtrack}
         fadeIn={true}
         fadeOut={true}
-        fadeOutAtGlobalFrame={7620}
+        fadeOutAtGlobalFrame={7980}
         sequenceStartFrame={120}
-        totalDurationInFrames={7500}
+        totalDurationInFrames={7920}
         loopDurationInFrames={AUDIO_LOOP_DURATION}
       />
 
-      {/* OUTRO music (4:10 - 4:24) - starts EARLY during StackedCardsScene for smooth crossfade */}
-      <Sequence from={7380} durationInFrames={420}>
+      {/* OUTRO music (4:26 - 4:32) - starts EARLIER for 2-second crossfade with main music */}
+      <Sequence from={7980} durationInFrames={190}>
         <OutroMusic />
       </Sequence>
     </>
@@ -502,12 +502,12 @@ export const Video: React.FC = () => {
         <ApprovalCenterFeature />
       </Sequence>
 
-      {/* 3:50 - 3:52   TRANSITION: "Coming Soon" (60 frames, 2s) */}
+      {/* 3:59 - 4:02   TRANSITION: "Hold tight..." (75 frames, 2.5s) */}
       <Sequence from={SCENE_START_FRAMES.transition2} durationInFrames={SCENE_DURATIONS.transition2}>
-        <SectionTitleScene title="Coming Soon" />
+        <SectionTitleScene title="Hold tight..." />
       </Sequence>
 
-      {/* 3:52 - 4:18   FEATURE 13: Composer — FINALE (780 frames, 26s) */}
+      {/* 4:02 - 4:28   FEATURE 13: Composer — FINALE (780 frames, 26s) */}
       <Sequence from={SCENE_START_FRAMES.feature13} durationInFrames={SCENE_DURATIONS.feature13}>
         <ComposerScene
           screenshots={[SCREENSHOTS.composerInterface, SCREENSHOTS.composerNatural, SCREENSHOTS.composerDiff, SCREENSHOTS.composerDocument]}
