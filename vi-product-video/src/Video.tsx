@@ -289,22 +289,26 @@ const IntroMusic: React.FC = () => {
 };
 
 /**
- * OutroMusic - Higher volume outro sting
+ * OutroMusic - Uses same raspberrymusic file from 8-second mark
+ *
+ * The raspberrymusic file is ~14.5 seconds. We start from the 8-second mark
+ * (240 frames @ 30fps) to get the later part of the track for the outro.
  */
 const OutroMusic: React.FC = () => {
   const frame = useCurrentFrame();
-  const fadeInDuration = 60; // Longer fade in for smoother transition (2 seconds)
+  const fadeInDuration = 60; // 2 second fade in for smooth transition
 
   let volume = 0.12;
 
-  // Fade in at start
+  // Fade in at start (crossfading with main music)
   if (frame < fadeInDuration) {
     volume = interpolate(frame, [0, fadeInDuration], [0, 0.12], {
       extrapolateRight: "clamp",
     });
   }
 
-  return <Audio src={introOutroMusic} volume={volume} />;
+  // Start from 8 seconds into the track (240 frames at 30fps)
+  return <Audio src={introOutroMusic} startFrom={240} volume={volume} />;
 };
 
 /**
@@ -313,12 +317,13 @@ const OutroMusic: React.FC = () => {
  * Timeline:
  * - 0:00 - 0:09: Intro music (logo animation)
  * - 0:05 - 0:09: Crossfade period (2 second overlap)
- * - 0:07 - 4:30: Main music (dashboard shows through features) - LOOPS 2x
- * - 4:28 - 4:32: Crossfade period (2 second overlap)
- * - 4:30 - 4:46: Outro music
+ * - 0:07 - 4:28: Main music (dashboard shows through features) - LOOPS 2x
+ * - 4:28 - 4:38: Outro music (same raspberrymusic from 8s mark)
  *
  * The main music track (m4.mp3) is ~150.7 seconds (4522 frames).
- * We need ~265 seconds (7940 frames), so we loop the track twice.
+ * We need ~263 seconds (7900 frames), so we loop the track twice.
+ *
+ * Outro uses raspberrymusic starting from 8-second mark for smooth transition.
  */
 const CrossfadeMusic: React.FC = () => {
   // Audio file duration in frames (150.726 seconds * 30fps)
