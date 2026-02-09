@@ -137,14 +137,37 @@ export const CalendarFeature: React.FC = () => (
  * Layout: crossfade
  * Screenshots: 2
  * Subtitle: "Your Personal Reference Board"
+ * Cinematic Zoom: YES — slight zoom to far right on first slide
  */
 export const PegBoardFeature: React.FC = () => (
-  <FeatureScene
+  <FeatureSceneWithCinematicZoom
     title="Peg Board"
     subtitle="Your Personal Reference Board"
     screenshots={[pegboardPanel, pegboardPin]}
     layout="crossfade"
     durationInFrames={400}
+    highlightZoom={{
+      x: 85,              // Far right on first slide
+      y: 35,              // Slightly up from center
+      scale: 1.3,         // Slight zoom
+      atFrame: 30,        // Start zoom after title appears
+      holdDuration: 60,   // Hold for 2 seconds
+      exitDuration: 24,   // Smooth exit
+      showCursor: false,  // No cursor for first slide zoom
+    }}
+    showCursor={{
+      startPos: { x: 50, y: 78 },   // Start below center
+      endPos: { x: 50, y: 78 },     // Stay below center (clicking second slide)
+      startFrame: 210,             // Start after crossfade to second slide (crossfade at ~200)
+      moveDuration: 15,            // Move to position
+      clickAtFrame: 235,           // Click at second slide
+      zoomSync: {
+        atFrame: 210,              // Start growing when cursor appears
+        zoomDuration: 30,          // Grow over 30 frames
+        minScale: 1,               // Start at normal size
+        maxScale: 2.5,             // Grow to large size
+      },
+    }}
   />
 );
 
