@@ -230,20 +230,30 @@ const CinematicZoomContent: React.FC<CinematicZoomContentProps> = ({
     );
 
     return (
-      <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true}>
-        <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
-          <ZoomedContent />
-          {showCursor && (
-            <AnimatedCursor
-              startPos={showCursor.startPos}
-              endPos={showCursor.endPos}
-              startFrame={showCursor.startFrame}
-              moveDuration={showCursor.moveDuration}
-              clickAtFrame={showCursor.clickAtFrame}
-            />
-          )}
-        </div>
-      </BrowserMockup>
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true} autoHeight={true}>
+          <div style={{ width: "100%", position: "relative" }}>
+            <ZoomedContent />
+            {showCursor && (
+              <AnimatedCursor
+                startPos={showCursor.startPos}
+                endPos={showCursor.endPos}
+                startFrame={showCursor.startFrame}
+                moveDuration={showCursor.moveDuration}
+                clickAtFrame={showCursor.clickAtFrame}
+              />
+            )}
+          </div>
+        </BrowserMockup>
+      </div>
     );
   }
 
@@ -263,7 +273,7 @@ const CinematicZoomContent: React.FC<CinematicZoomContentProps> = ({
   );
 
   return (
-    <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true}>
+    <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true} autoHeight={true}>
       <div style={{ width: "100%", position: "relative" }}>
         <ZoomedContent />
         {showCursor && (
@@ -337,13 +347,13 @@ const CrossfadeScreenshotsInner: React.FC<{ screenshots: string[] }> = ({ screen
           src={screenshots[1]}
           alt="Feature screenshot 2"
           style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
             width: "100%",
             height: "auto",
             display: "block",
             opacity: roundedSecondOpacity,
-            position: "absolute",
-            top: 0,
-            left: 0,
           }}
         />
       )}
@@ -477,9 +487,11 @@ const SingleScreenshot: React.FC<SingleScreenshotProps> = ({
         style={{
           transform: `scale(${scale})`,
           transformOrigin: `${offsetX}% ${offsetY}%`,
+          maxHeight: "100%",
+          width: "100%",
         }}
       >
-        <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true}>
+        <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true} autoHeight={true}>
           <img
             src={screenshots[0]}
             alt="Feature screenshot"
@@ -515,7 +527,7 @@ const CrossfadeScreenshots: React.FC<{ screenshots: string[] }> = ({ screenshots
         justifyContent: "center",
       }}
     >
-      <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true}>
+      <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true} autoHeight={true}>
         <div style={{ width: "100%", position: "relative" }}>
           <CrossfadeScreenshotsInner screenshots={screenshots} />
         </div>
