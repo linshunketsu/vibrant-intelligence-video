@@ -8,7 +8,7 @@ import introDashboard from "../assets/screenshots/intro-dashboard.png";
 
 /**
  * IntroScene - Opening sequence with logo, tagline, and dashboard flash
- * 0:00 - 0:15 (450 frames)
+ * 0:00 - 0:23 (700 frames) - Extended for voiceover
  *
  * Timeline:
  * - 0-15: Background fades in
@@ -18,7 +18,8 @@ import introDashboard from "../assets/screenshots/intro-dashboard.png";
  * - 100-130: "13 Features" badge animates in
  * - 130-200: Hold
  * - 200-400: Crossfade to dashboard screenshot
- * - 400-450: Transition out
+ * - 220-660: Voiceover plays (while dashboard is visible)
+ * - 650-700: Transition out
  */
 export const IntroScene: React.FC = () => {
   const frame = useCurrentFrame();
@@ -76,8 +77,8 @@ export const IntroScene: React.FC = () => {
     extrapolateRight: "clamp",
   });
 
-  // Transition out (400-450)
-  const outroOpacity = interpolate(frame, [400, 450], [1, 0], {
+  // Transition out (650-700)
+  const outroOpacity = interpolate(frame, [650, 700], [1, 0], {
     extrapolateRight: "clamp",
   });
 

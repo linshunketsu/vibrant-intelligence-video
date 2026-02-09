@@ -17,7 +17,7 @@ interface ComposerSceneProps {
 
 /**
  * ComposerScene - Finale scene with full-screen takeover
- * 3:01 - 3:18 (510 frames, 17s)
+ * 3:52 - 4:18 (780 frames, 26s)
  *
  * Special treatment:
  * - fullScreen: true — fills entire viewport, no floating card, no dotted bg
@@ -93,7 +93,7 @@ export const ComposerScene: React.FC<ComposerSceneProps> = ({ screenshots }) => 
       >
         <Carousel
           items={screenshots.map((src) => ({ image: src }))}
-          slideDuration={120} // ~4 seconds per slide (510 / 4 ≈ 127)
+          slideDuration={185} // ~6.2 seconds per slide (780 / 4 ≈ 195, minus transitions)
           transitionDuration={25} // Slower transitions for dramatic pacing (25 instead of 20)
           centerCardWidth={95} // Nearly full-width for composer finale
           sidePeekWidth={5}

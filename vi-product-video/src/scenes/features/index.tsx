@@ -56,10 +56,11 @@ import composerDiff from "../../assets/screenshots/composer-diff-view.png";
 import composerDocument from "../../assets/screenshots/composer-document.png";
 
 /**
- * FEATURE 1: Chat + SMS + Email (10s = 300 frames)
- * Layout: carousel (~3.3s per screenshot)
+ * FEATURE 1: Chat + SMS + Email (14s = 420 frames)
+ * Layout: carousel (~4.2s per screenshot)
  * Screenshots: 3
  * Subtitle: "Unified Communication"
+ * slideDuration: 125 frames (~4.2s) - synced to voiceover timing
  */
 export const ChatMultichannelFeature: React.FC = () => (
   <FeatureScene
@@ -67,13 +68,14 @@ export const ChatMultichannelFeature: React.FC = () => (
     subtitle="Unified Communication"
     screenshots={[chatInbox, chatThread, chatTypes]}
     layout="carousel"
-    durationInFrames={300}
+    durationInFrames={420}
+    slideDuration={125}
   />
 );
 
 /**
- * FEATURE 2: Health Tab (12s = 360 frames)
- * Layout: carousel (~4s per slide)
+ * FEATURE 2: Health Tab (22s = 660 frames)
+ * Layout: crossfade
  * Screenshots: 2
  * Subtitle: "Instant Clinical Context"
  * Cursor: YES — animate cursor clicking the "Health" tab on first screenshot
@@ -85,7 +87,7 @@ export const HealthTabFeature: React.FC = () => (
     subtitle="Instant Clinical Context"
     screenshots={[healthOverview, healthVariables]}
     layout="crossfade"
-    durationInFrames={360}
+    durationInFrames={660}
     showCursor={{
       startPos: { x: 50, y: 59 }, // At the zoom target (center of health variables)
       endPos: { x: 50, y: 59 },    // Stay there
@@ -106,10 +108,11 @@ export const HealthTabFeature: React.FC = () => (
 );
 
 /**
- * FEATURE 3: Calendar (12s = 360 frames)
- * Layout: carousel (~3s per slide)
+ * FEATURE 3: Calendar (22s = 660 frames)
+ * Layout: carousel (~5.3s per slide)
  * Screenshots: 4
  * Subtitle: "Smart Scheduling"
+ * slideDuration: 159 frames (~5.3s) - synced to voiceover timing
  */
 export const CalendarFeature: React.FC = () => (
   <FeatureScene
@@ -117,12 +120,13 @@ export const CalendarFeature: React.FC = () => (
     subtitle="Smart Scheduling"
     screenshots={[calendarClinic, calendarBooking, calendarIntegrations, calendarZoom]}
     layout="carousel"
-    durationInFrames={360}
+    durationInFrames={660}
+    slideDuration={159}
   />
 );
 
 /**
- * FEATURE 4: Peg Board (8s = 240 frames)
+ * FEATURE 4: Peg Board (13.3s = 400 frames)
  * Layout: crossfade
  * Screenshots: 2
  * Subtitle: "Your Personal Reference Board"
@@ -133,12 +137,12 @@ export const PegBoardFeature: React.FC = () => (
     subtitle="Your Personal Reference Board"
     screenshots={[pegboardPanel, pegboardPin]}
     layout="crossfade"
-    durationInFrames={240}
+    durationInFrames={400}
   />
 );
 
 /**
- * FEATURE 5: Quick Actions (10s = 300 frames)
+ * FEATURE 5: Quick Actions (16.7s = 500 frames)
  * Layout: crossfade
  * Screenshots: 2
  * Subtitle: "One-Click Clinical Actions"
@@ -151,7 +155,7 @@ export const QuickActionsFeature: React.FC = () => (
     subtitle="One-Click Clinical Actions"
     screenshots={[quickBar, quickExpanded]}
     layout="crossfade"
-    durationInFrames={300}
+    durationInFrames={500}
     highlightZoom={{
       x: 25,              // Slightly right of center on action icons
       y: 95,              // Bottom area above the chat input bar
@@ -165,10 +169,11 @@ export const QuickActionsFeature: React.FC = () => (
 
 /**
  * FEATURE 6: Encounter Notes (25s = 750 frames)
- * Layout: carousel with side peeks (~5s per slide)
+ * Layout: carousel with side peeks (~6s per slide)
  * Screenshots: 4
  * Subtitle: "AI-Powered Documentation"
  * Cursor: YES — cursor in bottom left on second slide (encounterZoom), moves up and right
+ * slideDuration: 179 frames (~6s) - synced to voiceover timing
  */
 export const EncounterNotesFeature: React.FC = () => (
   <FeatureScene
@@ -177,6 +182,7 @@ export const EncounterNotesFeature: React.FC = () => (
     screenshots={[encounterEditor, encounterZoom, encounterBlocks, encounterVariables]}
     layout="carousel"
     durationInFrames={750}
+    slideDuration={179}
     showCursor={{
       startPos: { x: 15, y: 85 },   // Bottom left corner
       endPos: { x: 23, y: 83 },      // Move up by 2, right by 8
@@ -188,36 +194,32 @@ export const EncounterNotesFeature: React.FC = () => (
 );
 
 /**
- * FEATURE 7: Workflow + AI (30s = 900 frames)
- * Layout: carousel with side peeks (~6s per slide)
+ * FEATURE 7: Workflow + AI (37s = 1110 frames)
+ * Layout: carousel with side peeks (~7.3s per slide)
  * Screenshots: 5
  * Subtitle: "Intelligent Care Pathways"
- * Cinematic Zoom: YES — zoom into the user and AI conversation panel on the right
+ * slideDuration: 220 frames (~7.3s) - synced to voiceover timing
+ * NOTE: Using FeatureScene instead of FeatureSceneWithCinematicZoom to avoid
+ * double browser frame issue with carousel layout
  */
 export const WorkflowAIFeature: React.FC = () => (
-  <FeatureSceneWithCinematicZoom
+  <FeatureScene
     title="Workflow + AI"
     subtitle="Intelligent Care Pathways"
     screenshots={[workflowOverview, workflowNodes, workflowCompose, workflowGenerated, workflowGuardian]}
     layout="carousel"
-    durationInFrames={900}
-    highlightZoom={{
-      x: 96,              // Far right where the user/AI conversation panel is
-      y: 50,              // Middle of the conversation
-      scale: 2.2,         // Moderate zoom level
-      preset: "dramatic", // Strong zoom to emphasize AI integration
-      atFrame: 200,       // Start zoom early (~6.7s)
-      holdDuration: 180,  // Hold for 6 seconds
-    }}
+    durationInFrames={1110}
+    slideDuration={220}
   />
 );
 
 /**
- * FEATURE 8: Form Builder (20s = 600 frames)
+ * FEATURE 8: Form Builder (20.7s = 620 frames)
  * Layout: carousel (~5s per slide)
  * Screenshots: 4
  * Subtitle: "AI Form Creation"
  * Cursor: YES — animate cursor typing in the AI prompt field
+ * slideDuration: 149 frames (~5s) - synced to voiceover timing
  */
 export const FormBuilderFeature: React.FC = () => (
   <FeatureScene
@@ -225,7 +227,8 @@ export const FormBuilderFeature: React.FC = () => (
     subtitle="AI Form Creation"
     screenshots={[formComponents, formAiPrompt, formAiResult, formMapping]}
     layout="carousel"
-    durationInFrames={600}
+    durationInFrames={620}
+    slideDuration={149}
     showCursor={{
       startPos: { x: 50, y: 80 },
       endPos: { x: 60, y: 60 },
@@ -237,11 +240,12 @@ export const FormBuilderFeature: React.FC = () => (
 );
 
 /**
- * FEATURE 9: My Practice (18s = 540 frames)
- * Layout: carousel (~6s per slide)
+ * FEATURE 9: My Practice (24.7s = 740 frames)
+ * Layout: carousel (~8s per slide)
  * Screenshots: 3
  * Subtitle: "Your Command Center"
  * Cinematic Zoom: YES — zoom into the sentiment analysis or Ask AI button
+ * slideDuration: 240 frames (~8s) - synced to voiceover timing
  */
 export const MyPracticeFeature: React.FC = () => (
   <FeatureSceneWithCinematicZoom
@@ -249,7 +253,8 @@ export const MyPracticeFeature: React.FC = () => (
     subtitle="Your Command Center"
     screenshots={[practiceDashboard, practiceSentiment, practiceAskAi]}
     layout="carousel"
-    durationInFrames={540}
+    durationInFrames={740}
+    slideDuration={240}
     highlightZoom={{
       x: 30,              // Left side where the sentiment/analytics are
       y: 40,              // Upper middle of the dashboard
@@ -315,7 +320,7 @@ export const EncounterSignFeature: React.FC = () => (
 );
 
 /**
- * FEATURE 12: Approval Center (5s = 150 frames)
+ * FEATURE 12: Approval Center (6s = 180 frames)
  * Layout: crossfade — fast entrance
  * Screenshots: 2
  */
@@ -325,7 +330,7 @@ export const ApprovalCenterFeature: React.FC = () => (
     subtitle="Streamlined Reviews"
     screenshots={[approvalCenter, approvalDetail]}
     layout="crossfade"
-    durationInFrames={150}
+    durationInFrames={180}
     fastEntrance={true} // Faster entrance for "One More Thing" rapid-fire section
   />
 );

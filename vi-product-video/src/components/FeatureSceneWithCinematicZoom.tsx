@@ -57,6 +57,7 @@ export interface FeatureSceneWithCinematicZoomProps {
   highlightZoom?: HighlightZoom;
   fullScreen?: boolean;
   fastEntrance?: boolean; // For "One More Thing" rapid-fire features - faster entrance (~10 frames)
+  slideDuration?: number; // Custom slide duration for carousel (in frames)
 }
 
 /**
@@ -89,6 +90,7 @@ export const FeatureSceneWithCinematicZoom: React.FC<FeatureSceneWithCinematicZo
   highlightZoom,
   fullScreen = false,
   fastEntrance = false,
+  slideDuration = 75,
 }) => {
   const frame = useCurrentFrame();
 
@@ -141,6 +143,7 @@ export const FeatureSceneWithCinematicZoom: React.FC<FeatureSceneWithCinematicZo
               highlightZoom={highlightZoom}
               layout={layout}
               showCursor={showCursor}
+              slideDuration={slideDuration}
             />
           ) : (
             <StandardScreenshotContent
@@ -148,6 +151,7 @@ export const FeatureSceneWithCinematicZoom: React.FC<FeatureSceneWithCinematicZo
               layout={layout}
               highlightZoom={highlightZoom}
               showCursor={showCursor}
+              slideDuration={slideDuration}
             />
           )}
         </div>
@@ -177,6 +181,7 @@ interface CinematicZoomContentProps {
   highlightZoom: HighlightZoom;
   layout: ScreenshotLayout;
   showCursor?: CursorAnimation;
+  slideDuration?: number;
 }
 
 const CinematicZoomContent: React.FC<CinematicZoomContentProps> = ({
@@ -184,6 +189,7 @@ const CinematicZoomContent: React.FC<CinematicZoomContentProps> = ({
   highlightZoom,
   layout,
   showCursor,
+  slideDuration = 75,
 }) => {
   if (screenshots.length === 0) return null;
 
@@ -207,7 +213,7 @@ const CinematicZoomContent: React.FC<CinematicZoomContentProps> = ({
       <CinematicZoomHighlight {...zoomProps} scale={highlightZoom.scale || 2}>
         <Carousel
           items={screenshots.map((src) => ({ image: src }))}
-          slideDuration={75}
+          slideDuration={slideDuration || 75}
           transitionDuration={18}
         />
       </CinematicZoomHighlight>
@@ -358,6 +364,7 @@ interface StandardScreenshotContentProps {
   layout: ScreenshotLayout;
   highlightZoom?: HighlightZoom;
   showCursor?: CursorAnimation;
+  slideDuration?: number;
 }
 
 const StandardScreenshotContent: React.FC<StandardScreenshotContentProps> = ({
@@ -365,6 +372,7 @@ const StandardScreenshotContent: React.FC<StandardScreenshotContentProps> = ({
   layout,
   highlightZoom,
   showCursor,
+  slideDuration = 75,
 }) => {
   const frame = useCurrentFrame();
 
@@ -404,7 +412,7 @@ const StandardScreenshotContent: React.FC<StandardScreenshotContentProps> = ({
         return (
           <Carousel
             items={screenshots.map((src) => ({ image: src }))}
-            slideDuration={75}
+            slideDuration={slideDuration || 75}
             transitionDuration={18}
           />
         );
