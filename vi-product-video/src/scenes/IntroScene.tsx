@@ -16,9 +16,10 @@ import introDashboard from "../assets/screenshots/intro-dashboard.png";
  * - 25-45: "Vibrant Intelligence" text fades in (overlaps logo)
  * - 40-60: Tagline slides up (overlaps title)
  * - 55-75: "13 Features" badge animates in (overlaps tagline)
- * - 75-435: Hold with branding visible
- * - 435-450: Crossfade to dashboard screenshot (connects to feature1)
- * - 450+: Feature 1 begins with dashboard visible
+ * - 75-120: Brief hold
+ * - 120-180: Crossfade to dashboard screenshot (faster)
+ * - 140-420: Voiceover plays (while dashboard is visible)
+ * - 420-450: Transition out
  */
 export const IntroScene: React.FC = () => {
   const frame = useCurrentFrame();
@@ -64,20 +65,22 @@ export const IntroScene: React.FC = () => {
     extrapolateRight: "clamp",
   });
 
-  // Dashboard crossfade (435-450) - branding fades out, dashboard fades in at very end
-  const brandingOpacity = interpolate(frame, [435, 450], [1, 0], {
+  // Dashboard crossfade (120-180, faster)
+  const brandingOpacity = interpolate(frame, [120, 150], [1, 0], {
     extrapolateRight: "clamp",
   });
-  const dashboardOpacity = interpolate(frame, [435, 450], [0, 1], {
+  const dashboardOpacity = interpolate(frame, [120, 150], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const dashboardScale = interpolate(frame, [435, 450], [0.95, 1], {
+  const dashboardScale = interpolate(frame, [120, 170], [0.92, 1], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });
 
-  // No outro fade - dashboard connects directly to feature1
-  const outroOpacity = 1;
+  // Transition out (420-450)
+  const outroOpacity = interpolate(frame, [420, 450], [1, 0], {
+    extrapolateRight: "clamp",
+  });
 
   return (
     <AbsoluteFill style={{ backgroundColor: theme.colors.background }}>
@@ -93,8 +96,8 @@ export const IntroScene: React.FC = () => {
         />
       </AbsoluteFill>
 
-      {/* Branding content (fades out 435-450) */}
-      <AbsoluteFill
+      <AbsoluteFill style={{ opacity: outroOpacity }}>
+        {/* Branding content (fades out at 200) */}
         <AbsoluteFill
           style={{
             display: "flex",
@@ -173,7 +176,7 @@ export const IntroScene: React.FC = () => {
           </div>
         </AbsoluteFill>
 
-      {/* Dashboard preview (fades in 435-450) */}
+        {/* Dashboard preview (fades in at 200) */}
         <AbsoluteFill
           style={{
             opacity: dashboardOpacity,
@@ -203,6 +206,7 @@ export const IntroScene: React.FC = () => {
             </BrowserMockup>
           </div>
         </AbsoluteFill>
+      </AbsoluteFill>
     </AbsoluteFill>
   );
 };

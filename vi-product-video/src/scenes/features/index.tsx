@@ -15,7 +15,6 @@
 import React from "react";
 import { FeatureScene } from "../FeatureScene";
 import { FeatureSceneWithCinematicZoom } from "../../components/FeatureSceneWithCinematicZoom";
-import introDashboard from "../../assets/screenshots/intro-dashboard.png";
 
 // Import all screenshots
 import chatInbox from "../../assets/screenshots/chat-multichannel-inbox.png";
@@ -58,27 +57,21 @@ import composerDocument from "../../assets/screenshots/composer-document.png";
 
 /**
  * FEATURE 1: Chat + SMS + Email (14s = 420 frames)
- * Layout: carousel (starts with intro dashboard, then chat screenshots)
- * Screenshots: 4 (intro dashboard, chat inbox, thread, types)
+ * Layout: carousel (~4.2s per screenshot)
+ * Screenshots: 3
  * Subtitle: "Unified Communication"
- * slideDuration: 105 frames (~3.5s) - includes intro dashboard at start
- * entranceDelay: 0 - starts immediately with intro dashboard visible
- *
- * Timeline:
- * - 0-105: Intro dashboard (while intro-0 VO plays)
- * - 105-210: Chat inbox (while intro-1, intro-2, feature1-0 VOs play)
- * - 210-315: Chat thread (while feature1-1, feature1-2 VOs play)
- * - 315-420: Chat types (while feature1-3 VO plays)
+ * slideDuration: 125 frames (~4.2s) - synced to voiceover timing
+ * entranceDelay: 133 frames - delays entrance until intro voiceover finishes
  */
 export const ChatMultichannelFeature: React.FC = () => (
   <FeatureScene
     title="Chat + SMS + Email"
     subtitle="Unified Communication"
-    screenshots={[introDashboard, chatInbox, chatThread, chatTypes]}
+    screenshots={[chatInbox, chatThread, chatTypes]}
     layout="carousel"
     durationInFrames={420}
-    slideDuration={105}
-    entranceDelay={0}
+    slideDuration={125}
+    entranceDelay={133} // Delay until intro VO ends (583 - 450 = 133)
   />
 );
 
