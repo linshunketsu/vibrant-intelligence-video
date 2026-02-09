@@ -217,21 +217,29 @@ const SingleScreenshot: React.FC<SingleScreenshotProps> = ({
       style={{
         width: "100%",
         height: "100%",
-        transform: `scale(${scale})`,
-        transformOrigin: `${offsetX}% ${offsetY}%`,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true}>
-        <img
-          src={screenshots[0]}
-          alt="Feature screenshot"
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
-        />
-      </BrowserMockup>
+      <div
+        style={{
+          transform: `scale(${scale})`,
+          transformOrigin: `${offsetX}% ${offsetY}%`,
+        }}
+      >
+        <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true}>
+          <img
+            src={screenshots[0]}
+            alt="Feature screenshot"
+            style={{
+              width: "100%",
+              height: "auto",
+              display: "block",
+            }}
+          />
+        </BrowserMockup>
+      </div>
     </div>
   );
 };
@@ -279,20 +287,28 @@ const CrossfadeScreenshots: React.FC<{ screenshots: string[] }> = ({ screenshots
   const roundedSecondOpacity = Math.round(secondOpacity * 1000) / 1000;
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true}>
-        <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
+        <div style={{ width: "100%", position: "relative" }}>
           {/* CRITICAL FIX: Use conditional rendering to prevent invisible elements from causing artifacts */}
           {roundedFirstOpacity > 0.001 && (
             <img
               src={screenshots[0]}
               alt="Feature screenshot 1"
               style={{
-                position: "absolute",
                 width: "100%",
-                height: "100%",
-                objectFit: "cover",
+                height: "auto",
+                display: "block",
                 opacity: roundedFirstOpacity,
+                position: roundedSecondOpacity > 0.001 ? "absolute" : "static",
               }}
             />
           )}
@@ -301,11 +317,13 @@ const CrossfadeScreenshots: React.FC<{ screenshots: string[] }> = ({ screenshots
               src={screenshots[1]}
               alt="Feature screenshot 2"
               style={{
-                position: "absolute",
                 width: "100%",
-                height: "100%",
-                objectFit: "cover",
+                height: "auto",
+                display: "block",
                 opacity: roundedSecondOpacity,
+                position: "absolute",
+                top: 0,
+                left: 0,
               }}
             />
           )}
