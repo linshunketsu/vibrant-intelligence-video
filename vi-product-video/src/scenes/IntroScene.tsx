@@ -2,23 +2,26 @@ import React from "react";
 import { AbsoluteFill, interpolate, useCurrentFrame, Easing } from "remotion";
 import { DottedBackground } from "../components/DottedBackground";
 import { BrowserMockup } from "../components/BrowserMockup";
+import { ChaosTextThrow } from "../components/ChaosTextThrow";
 import { easing, theme, timing } from "../styles/theme";
 import logoIcon from "../assets/logo-icon.svg";
 import introDashboard from "../assets/screenshots/intro-dashboard.png";
 
 /**
- * IntroScene - Opening sequence with logo, tagline, and dashboard flash
+ * IntroScene - Opening sequence with logo, tagline, chaos text, and dashboard
  * 0:00 - 0:21 (630 frames) - Extended for voiceover completion
  *
  * Timeline:
- * - 0-10: Background fades in
- * - 5-25: Logo icon fades in (120×120px, scale 0.9→1)
- * - 20-45: "Vibrant Intelligence" text fades in
- * - 40-65: Tagline slides up
- * - 60-85: "13 Features" badge animates in
- * - 85-130: Brief hold
- * - 130-160: Crossfade to dashboard screenshot
- * - 160-610: Voiceover plays (while dashboard is visible)
+ * - 0-10:   Background fades in
+ * - 5-25:   Logo icon fades in (120×120px, scale 0.9→1)
+ * - 20-45:  "Vibrant Intelligence" text fades in
+ * - 40-65:  Tagline slides up
+ * - 60-85:  "13 Features" badge animates in
+ * - 85-110: Brief hold
+ * - 110-130: FADE OUT branding elements
+ * - 110-450: CHAOS TEXT THROW (extended - "patient care", "scheduling", etc.)
+ * - 450-480: Crossfade OUT chaos text, IN dashboard
+ * - 480-610: Dashboard visible (voiceover continues)
  * - 610-630: Transition out
  */
 export const IntroScene: React.FC = () => {
@@ -65,14 +68,16 @@ export const IntroScene: React.FC = () => {
     extrapolateRight: "clamp",
   });
 
-  // Dashboard crossfade (130-160)
-  const brandingOpacity = interpolate(frame, [130, 160], [1, 0], {
+  // Branding fade out (110-130) - earlier to make room for chaos text
+  const brandingOpacity = interpolate(frame, [110, 130], [1, 0], {
     extrapolateRight: "clamp",
   });
-  const dashboardOpacity = interpolate(frame, [130, 160], [0, 1], {
+
+  // Dashboard crossfade (480-510) - starts at 480 to match voiceover
+  const dashboardOpacity = interpolate(frame, [480, 510], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const dashboardScale = interpolate(frame, [130, 170], [0.92, 1], {
+  const dashboardScale = interpolate(frame, [480, 515], [0.92, 1], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });
@@ -97,7 +102,10 @@ export const IntroScene: React.FC = () => {
       </AbsoluteFill>
 
       <AbsoluteFill style={{ opacity: outroOpacity }}>
-        {/* Branding content (fades out at 200) */}
+        {/* Chaos text throw (140-480) - extended duration for practice management tasks */}
+        <ChaosTextThrow startFrame={140} duration={340} />
+
+        {/* Branding content (fades out at 130) */}
         <AbsoluteFill
           style={{
             display: "flex",
@@ -176,7 +184,7 @@ export const IntroScene: React.FC = () => {
           </div>
         </AbsoluteFill>
 
-        {/* Dashboard preview (fades in at 200) */}
+        {/* Dashboard preview (fades in at 480) */}
         <AbsoluteFill
           style={{
             opacity: dashboardOpacity,
