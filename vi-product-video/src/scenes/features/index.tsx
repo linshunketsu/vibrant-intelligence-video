@@ -304,8 +304,8 @@ export const MyPracticeFeature: React.FC = () => (
       cursorStartOffset: { x: 95, y: 80 },  // Cursor starts at far right
     }}
     showCursor={{
-      startPos: { x: 85, y: 75 },   // Start at right side
-      endPos: { x: 25, y: 75 },      // Move far left to point at Ask AI button
+      startPos: { x: 85, y: 85 },   // Start at right side, moved down
+      endPos: { x: 25, y: 85 },      // Move far left to point at Ask AI button, same Y level
       startFrame: 520,               // Start cursor movement after zoom begins
       moveDuration: 40,              // Smooth movement across
       clickAtFrame: 555,             // Click on Ask AI button
