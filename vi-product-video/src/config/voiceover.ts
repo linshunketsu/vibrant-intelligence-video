@@ -112,24 +112,24 @@ export interface SceneVoiceover {
  * Timings are approximate and may need adjustment based on actual audio duration
  */
 export const VOICEOVER_CONFIG: SceneVoiceover[] = [
-  // INTRO - Logo animation + Dashboard flash (450 frames = 15s)
-  // Voiceover starts when dashboard appears at frame 140
+  // INTRO - Logo animation only (450 frames = 15s)
+  // No voiceover - just branding animation
   {
     sceneId: "intro",
     sceneName: "INTRO",
-    lines: [
-      { id: "intro-0", audio: intro_0, text: "Running a modern practice means juggling patient care, communication, scheduling, and documentation—all at once.", startFrame: 140 },
-      { id: "intro-1", audio: intro_1, text: "What if your EHR actually helped instead of getting in the way?", startFrame: 0 }, // Will be calculated sequentially
-      { id: "intro-2", audio: intro_2, text: "Meet Vibrant Intelligence: an AI-powered platform built for how clinics actually work.", startFrame: 0 }, // Will be calculated sequentially
-    ],
+    lines: [],
   },
 
   // Feature 1: Chat + SMS + Email
+  // Intro voiceovers play here while dashboard is visible
   {
     sceneId: "feature1",
     sceneName: "Chat + SMS + Email",
     lines: [
-      { id: "feature1-0", audio: feature1_0, text: "First up: unified communication.", startFrame: 140 }, // Delayed to avoid overlap with intro-2
+      { id: "intro-0", audio: intro_0, text: "Running a modern practice means juggling patient care, communication, scheduling, and documentation—all at once.", startFrame: 15 },
+      { id: "intro-1", audio: intro_1, text: "What if your EHR actually helped instead of getting in the way?", startFrame: 0 }, // Will be calculated sequentially
+      { id: "intro-2", audio: intro_2, text: "Meet Vibrant Intelligence: an AI-powered platform built for how clinics actually work.", startFrame: 0 }, // Will be calculated sequentially
+      { id: "feature1-0", audio: feature1_0, text: "First up: unified communication.", startFrame: 0 }, // Will be calculated sequentially
       { id: "feature1-1", audio: feature1_1, text: "Text messages, emails, and chat—all in one interface.", startFrame: 0 }, // Calculated sequentially
       { id: "feature1-2", audio: feature1_2, text: "No more switching between apps.", startFrame: 0 }, // Calculated sequentially
       { id: "feature1-3", audio: feature1_3, text: "Every interaction with a patient lives in one place, so your team always has the full picture.", startFrame: 0 }, // Calculated sequentially
