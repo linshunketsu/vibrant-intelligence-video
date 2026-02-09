@@ -226,11 +226,9 @@ const SingleScreenshot: React.FC<SingleScreenshotProps> = ({
         style={{
           transform: `scale(${scale})`,
           transformOrigin: `${offsetX}% ${offsetY}%`,
-          maxHeight: "100%",
-          width: "100%",
         }}
       >
-        <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true} autoHeight={true}>
+        <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true}>
           <img
             src={screenshots[0]}
             alt="Feature screenshot"
@@ -298,7 +296,7 @@ const CrossfadeScreenshots: React.FC<{ screenshots: string[] }> = ({ screenshots
         justifyContent: "center",
       }}
     >
-      <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true} autoHeight={true}>
+      <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true}>
         <div style={{ width: "100%", position: "relative" }}>
           {/* CRITICAL FIX: Use conditional rendering to prevent invisible elements from causing artifacts */}
           {roundedFirstOpacity > 0.001 && (

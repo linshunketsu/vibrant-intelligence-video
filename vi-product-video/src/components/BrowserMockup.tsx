@@ -11,7 +11,6 @@ interface BrowserMockupProps {
   minimal?: boolean; // Use minimal chrome (just top bar, no buttons)
   fullscreen?: boolean; // No chrome at all - just the content
   reducedShadow?: boolean; // Use ~50% intensity shadow (for carousel side cards)
-  autoHeight?: boolean; // Content area uses height: auto instead of flex: 1 (shrinks to fit content)
 }
 
 /**
@@ -40,7 +39,6 @@ export const BrowserMockup: React.FC<BrowserMockupProps> = ({
   minimal = false,
   fullscreen = false,
   reducedShadow = false,
-  autoHeight = false,
 }) => {
   const frame = useCurrentFrame();
 
@@ -122,7 +120,7 @@ export const BrowserMockup: React.FC<BrowserMockupProps> = ({
           transform: `scale(${scale})`,
           transformOrigin: "top left",
           width: "100%",
-          height: autoHeight ? "auto" : "100%",
+          height: "100%",
         }}
       >
         <div
@@ -131,7 +129,7 @@ export const BrowserMockup: React.FC<BrowserMockupProps> = ({
             borderRadius,
             overflow: "hidden",
             boxShadow: richShadow,
-            height: autoHeight ? "auto" : "100%",
+            height: "100%",
             display: "flex",
             flexDirection: "column",
           }}
@@ -202,7 +200,7 @@ export const BrowserMockup: React.FC<BrowserMockupProps> = ({
           {/* Content Area */}
           <div
             style={{
-              flex: autoHeight ? "0 1 auto" : 1,
+              flex: 1,
               overflow: "hidden",
               position: "relative",
             }}
@@ -225,7 +223,7 @@ export const BrowserMockup: React.FC<BrowserMockupProps> = ({
         transform: `scale(${scale})`,
         transformOrigin: "top left",
         width: "100%",
-        height: autoHeight ? "auto" : "100%",
+        height: "100%",
       }}
     >
       {/* Browser Frame */}
@@ -235,7 +233,7 @@ export const BrowserMockup: React.FC<BrowserMockupProps> = ({
           borderRadius,
           overflow: "hidden",
           boxShadow: richShadow,
-          height: autoHeight ? "auto" : "100%",
+          height: "100%",
           display: "flex",
           flexDirection: "column",
         }}
@@ -338,7 +336,7 @@ export const BrowserMockup: React.FC<BrowserMockupProps> = ({
         {/* Content Area */}
         <div
           style={{
-            flex: autoHeight ? "0 1 auto" : 1,
+            flex: 1,
             overflow: "hidden",
             position: "relative",
           }}
