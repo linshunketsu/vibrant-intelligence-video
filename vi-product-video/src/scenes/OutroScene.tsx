@@ -5,63 +5,62 @@ import logoIcon from "../assets/logo-icon.svg";
 
 /**
  * OutroScene - Closing sequence with logo, tagline, and CTA
- * 4:32 - 4:48 (480 frames)
+ * 4:30 - 4:38 (240 frames = 8 seconds)
  *
  * Slides up from below to replace StackedCardsScene
  *
- * Timeline:
- * - 0-30: Slide up from bottom (covering StackedCardsScene)
- * - 30-70: Logo icon fades in (150×150px)
- * - 70-110: "Vibrant Intelligence" text fades in
- * - 110-150: Tagline fades in
- * - 150-220: Hold
- * - 220-260: CTA fades in
- * - 260-480: Hold to end
+ * Timeline (faster):
+ * - 0-15: Slide up from bottom (covering StackedCardsScene)
+ * - 15-35: Logo icon fades in (150×150px)
+ * - 25-50: "Vibrant Intelligence" text fades in
+ * - 40-65: Tagline fades in
+ * - 60-90: CTA fades in
+ * - 90-240: Hold to end
  */
 export const OutroScene: React.FC = () => {
   const frame = useCurrentFrame();
 
-  // Slide up animation from bottom (0-30 frames)
-  const slideUpY = interpolate(frame, [0, 30], [1080, 0], {
+  // Slide up animation from bottom (0-15 frames) - faster
+  const slideUpY = interpolate(frame, [0, 15], [1080, 0], {
     easing: Easing.out(Easing.cubic),
     extrapolateRight: "clamp",
   });
 
-  // Fade in content (starts at frame 30)
-  const fadeInStart = 30;
+  // Fade in content (starts earlier, at frame 15)
+  const fadeInStart = 15;
 
-  // Logo animation (30-70)
-  const logoOpacity = interpolate(frame, [fadeInStart, fadeInStart + 20], [0, 1], {
+  // Logo animation (15-35) - 20 frames
+  const logoOpacity = interpolate(frame, [fadeInStart, fadeInStart + 15], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const logoScale = interpolate(frame, [fadeInStart, fadeInStart + 40], [0.9, 1], {
+  const logoScale = interpolate(frame, [fadeInStart, fadeInStart + 25], [0.9, 1], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });
 
-  // Title text fade in (70-110)
-  const titleOpacity = interpolate(frame, [fadeInStart + 40, fadeInStart + 60], [0, 1], {
+  // Title text fade in (25-50) - starts before logo finishes, overlaps
+  const titleOpacity = interpolate(frame, [fadeInStart + 10, fadeInStart + 30], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const titleScale = interpolate(frame, [fadeInStart + 40, fadeInStart + 80], [0.95, 1], {
+  const titleScale = interpolate(frame, [fadeInStart + 10, fadeInStart + 40], [0.95, 1], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });
 
-  // Tagline fade in (110-150)
-  const taglineOpacity = interpolate(frame, [fadeInStart + 80, fadeInStart + 100], [0, 1], {
+  // Tagline fade in (40-65) - overlaps with title
+  const taglineOpacity = interpolate(frame, [fadeInStart + 25, fadeInStart + 45], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const taglineY = interpolate(frame, [fadeInStart + 80, fadeInStart + 120], [15, 0], {
+  const taglineY = interpolate(frame, [fadeInStart + 25, fadeInStart + 55], [15, 0], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });
 
-  // CTA fade in (220-260)
-  const ctaOpacity = interpolate(frame, [220, 240], [0, 1], {
+  // CTA fade in (60-90) - comes in quickly after tagline
+  const ctaOpacity = interpolate(frame, [60, 75], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const ctaScale = interpolate(frame, [220, 260], [0.92, 1], {
+  const ctaScale = interpolate(frame, [60, 90], [0.92, 1], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });

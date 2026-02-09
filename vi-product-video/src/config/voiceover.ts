@@ -354,7 +354,7 @@ export function getAllVoiceoverTracks(): Array<{ audio: string; startFrame: numb
     transition2: 7160, // 3:59 (60 frames)
     feature13: 7220,   // 4:00 (780 frames)
     stackedCards: 8000, // 4:27 (110 frames) - "One Platform, Everything You Need"
-    outro: 8110,        // 4:30 (480 frames) - Logo only, no voiceover
+    outro: 8110,        // 4:30 (240 frames, 8s) - Logo only, no voiceover
   };
 
   // Actual durations for each voiceover line (in frames at 30fps)
@@ -462,7 +462,7 @@ export const SCENE_START_FRAMES: Record<string, number> = {
   transition2: 7160, // 3:59 (60 frames)
   feature13: 7220,   // 4:00 (780 frames)
   stackedCards: 8000, // 4:27 (110 frames) - "One Platform, Everything You Need" with voiceover
-  outro: 8110,        // 4:30 (480 frames) - Logo only, no voiceover
+  outro: 8110,        // 4:30 (240 frames, 8s) - Logo only, no voiceover
 };
 
 /**
@@ -485,10 +485,10 @@ export const SCENE_DURATIONS: Record<string, number> = {
   feature12: 180,    // 6s
   transition2: 60,   // 2s
   feature13: 780,    // 26s
-  outro: 480,        // 16s
+  outro: 240,        // 8s
 };
 
 /**
  * Total video duration in frames
  */
-export const TOTAL_VIDEO_FRAMES = 8590; // ~4:46 at 30fps (110 frames for StackedCardsScene)
+export const TOTAL_VIDEO_FRAMES = 8350; // ~4:38 at 30fps (110 frames for StackedCardsScene, 240 frames for Outro)

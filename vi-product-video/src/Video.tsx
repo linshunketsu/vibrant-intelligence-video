@@ -26,7 +26,7 @@ import { getAllVoiceoverTracks, SCENE_START_FRAMES, SCENE_DURATIONS, TOTAL_VIDEO
 
 /**
  * Vibrant Intelligence Product Video
- * Total: ~4:46 (8590 frames @ 30fps)
+ * Total: ~4:38 (8350 frames @ 30fps)
  *
  * Extended to accommodate actual voiceover durations.
  * Intro scene includes voiceover starting when dashboard appears.
@@ -50,8 +50,8 @@ import { getAllVoiceoverTracks, SCENE_START_FRAMES, SCENE_DURATIONS, TOTAL_VIDEO
  * TRANSITION: 3:59 - 4:00 (60 frames, 2s) - "Coming Soon"
  * FEATURE 13: 4:00 - 4:27 (780 frames, 26s) - Composer (Finale)
  * STACKED CARDS: 4:27 - 4:30 (110 frames, 3.7s) - "One Platform, Everything You Need" + outro voiceover
- * OUTRO: 4:30 - 4:46 (480 frames, 16s) - Logo only, no voiceover
- * TOTAL: 4:46 (8590 frames)
+ * OUTRO: 4:30 - 4:38 (240 frames, 8s) - Logo only, no voiceover
+ * TOTAL: 4:38 (8350 frames)
  */
 
 // Screenshot imports - using actual files from assets/screenshots/
@@ -342,8 +342,8 @@ const CrossfadeMusic: React.FC = () => {
         loopDurationInFrames={AUDIO_LOOP_DURATION}
       />
 
-      {/* OUTRO music (4:28 - 4:46) - starts 2 seconds early for smooth crossfade */}
-      <Sequence from={8090} durationInFrames={500}>
+      {/* OUTRO music (4:28 - 4:38) - starts 2 seconds early for smooth crossfade */}
+      <Sequence from={8090} durationInFrames={260}>
         <OutroMusic />
       </Sequence>
     </>
@@ -507,12 +507,12 @@ export const Video: React.FC = () => {
         />
       </Sequence>
 
-      {/* 4:18 - 4:22   STACKED CARDS: "One Platform, Everything You Need" (110 frames, 3.7s) */}
+      {/* 4:27 - 4:30   STACKED CARDS: "One Platform, Everything You Need" (110 frames, 3.7s) */}
       <Sequence from={SCENE_START_FRAMES.stackedCards} durationInFrames={110}>
         <StackedCardsScene />
       </Sequence>
 
-      {/* 4:23 - 4:39   CLOSING / OUTRO (480 frames, 16s) - Logo only, no voiceover */}
+      {/* 4:30 - 4:38   OUTRO (240 frames, 8s) - Logo only, no voiceover */}
       <Sequence from={SCENE_START_FRAMES.outro} durationInFrames={SCENE_DURATIONS.outro}>
         <OutroScene />
       </Sequence>
