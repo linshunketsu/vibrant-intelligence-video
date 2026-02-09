@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Voiceover Duration Analyzer</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #eee; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #444; padding: 8px 12px; text-align: left; }
+        th { background: #333; }
+        tr:nth-child(even) { background: #252525; }
+        .copy-btn { margin-top: 20px; padding: 10px 20px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        .copy-btn:hover { background: #45a049; }
+        #output { background: #111; padding: 15px; border-radius: 5px; margin-top: 20px; white-space: pre; }
+        .loading { color: #888; }
+    </style>
+</head>
+<body>
+    <h1>Voiceover Duration Analyzer</h1>
+    <p>Calculating actual durations from audio files...</p>
+    <div id="status" class="loading">Loading...</div>
+    <table id="results">
+        <thead>
+            <tr>
+                <th>File</th>
+                <th>Duration (s)</th>
+                <th>Frames @ 30fps</th>
+                <th>Size (KB)</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <button class="copy-btn" onclick="copyToClipboard()">Copy TypeScript Config</button>
+    <div id="output"></div>
+
+    <script>
+        const audioFiles = [
+            { id: "intro-0", file: "scene-00-intro-0.wav" },
+            { id: "intro-1", file: "scene-00-intro-1.wav" },
+            { id: "intro-2", file: "scene-00-intro-2.wav" },
+            { id: "feature1-0", file: "scene-01-chat-0.wav" },
+            { id: "feature1-1", file: "scene-01-chat-1.wav" },
+            { id: "feature1-2", file: "scene-01-chat-2.wav" },
+            { id: "feature1-3", file: "scene-01-chat-3.wav" },
+            { id: "feature2-0", file: "scene-02-health-0.wav" },
+            { id: "feature2-1", file: "scene-02-health-1.wav" },
+            { id: "feature2-2", file: "scene-02-health-2.wav" },
+            { id: "feature3-0", file: "scene-03-calendar-0.wav" },
+            { id: "feature3-1", file: "scene-03-calendar-1.wav" },
+            { id: "feature3-2", file: "scene-03-calendar-2.wav" },
+            { id: "feature3-3", file: "scene-03-calendar-3.wav" },
+            { id: "feature3-4", file: "scene-03-calendar-4.wav" },
+            { id: "feature4-0", file: "scene-04-pegboard-0.wav" },
+            { id: "feature4-1", file: "scene-04-pegboard-1.wav" },
+            { id: "feature4-2", file: "scene-04-pegboard-2.wav" },
+            { id: "feature5-0", file: "scene-05-quickactions-0.wav" },
+            { id: "feature5-1", file: "scene-05-quickactions-1.wav" },
+            { id: "feature5-2", file: "scene-05-quickactions-2.wav" },
+            { id: "feature5-3", file: "scene-05-quickactions-3.wav" },
+            { id: "feature6-0", file: "scene-06-notes-0.wav" },
+            { id: "feature6-1", file: "scene-06-notes-1.wav" },
+            { id: "feature6-2", file: "scene-06-notes-2.wav" },
+            { id: "feature6-3", file: "scene-06-notes-3.wav" },
+            { id: "feature6-4", file: "scene-06-notes-4.wav" },
+            { id: "feature7-0", file: "scene-07-workflows-0.wav" },
+            { id: "feature7-1", file: "scene-07-workflows-1.wav" },
+            { id: "feature7-2", file: "scene-07-workflows-2.wav" },
+            { id: "feature7-3", file: "scene-07-workflows-3.wav" },
+            { id: "feature7-4", file: "scene-07-workflows-4.wav" },
+            { id: "feature7-5", file: "scene-07-workflows-5.wav" },
+            { id: "feature7-6", file: "scene-07-workflows-6.wav" },
+            { id: "feature8-0", file: "scene-08-forms-0.wav" },
+            { id: "feature8-1", file: "scene-08-forms-1.wav" },
+            { id: "feature8-2", file: "scene-08-forms-2.wav" },
+            { id: "feature8-3", file: "scene-08-forms-3.wav" },
+            { id: "feature8-4", file: "scene-08-forms-4.wav" },
+            { id: "feature9-0", file: "scene-09-practice-0.wav" },
+            { id: "feature9-1", file: "scene-09-practice-1.wav" },
+            { id: "feature9-2", file: "scene-09-practice-2.wav" },
+            { id: "feature9-3", file: "scene-09-practice-3.wav" },
+            { id: "feature9-4", file: "scene-09-practice-4.wav" },
+            { id: "transition1-0", file: "scene-10-transition-onemorething-0.wav" },
+            { id: "feature10-0", file: "scene-10-collaborate-0.wav" },
+            { id: "feature11-0", file: "scene-11-sign-0.wav" },
+            { id: "feature12-0", file: "scene-12-approve-0.wav" },
+            { id: "feature12-1", file: "scene-12-approve-1.wav" },
+            { id: "transition2-0", file: "scene-13-transition-comingsoon-0.wav" },
+            { id: "feature13-0", file: "scene-13-composer-0.wav" },
+            { id: "feature13-1", file: "scene-13-composer-1.wav" },
+            { id: "feature13-2", file: "scene-13-composer-2.wav" },
+            { id: "feature13-3", file: "scene-13-composer-3.wav" },
+            { id: "feature13-4", file: "scene-13-composer-4.wav" },
+            { id: "feature13-5", file: "scene-13-composer-5.wav" },
+            { id: "feature13-6", file: "scene-13-composer-6.wav" },
+            { id: "outro-0", file: "scene-14-outro-0.wav" },
+            { id: "outro-1", file: "scene-14-outro-1.wav" },
+        ];
+
+        const results = [];
+        let loaded = 0;
+
+        async function getAudioDuration(url) {
+            return new Promise((resolve, reject) => {
+                const audio = new Audio(url);
+                audio.addEventListener('loadedmetadata', () => {
+                    resolve({
+                        duration: audio.duration,
+                        sizeKB: 0 // Will be filled by fetch
+                    });
+                    URL.revokeObjectURL(url);
+                });
+                audio.addEventListener('error', reject);
+            });
+        }
+
+        async function getFileSize(url) {
+            const response = await fetch(url);
+            const blob = await response.blob();
+            return blob.size / 1024; // KB
+        }
+
+        async function processFiles() {
+            const tbody = document.querySelector('#results tbody');
+            const audioBasePath = '../src/assets/audio/';
+            let totalDuration = 0;
+
+            for (const item of audioFiles) {
+                try {
+                    const url = audioBasePath + item.file;
+                    const audioData = await getAudioDuration(url);
+                    const sizeKB = await getFileSize(url);
+                    const frames = Math.round(audioData.duration * 30);
+
+                    results.push({
+                        id: item.id,
+                        file: item.file,
+                        duration: audioData.duration,
+                        frames: frames,
+                        sizeKB: sizeKB
+                    });
+
+                    totalDuration += audioData.duration;
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.file}</td>
+                        <td>${audioData.duration.toFixed(2)}s</td>
+                        <td>${frames}</td>
+                        <td>${sizeKB.toFixed(1)} KB</td>
+                    `;
+                    tbody.appendChild(row);
+
+                } catch (e) {
+                    console.error(`Error loading ${item.file}:`, e);
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td colspan="4">${item.file} - ERROR: ${e.message}</td>`;
+                    tbody.appendChild(row);
+                }
+
+                loaded++;
+                document.getElementById('status').textContent = `Loading... ${loaded}/${audioFiles.length}`;
+            }
+
+            document.getElementById('status').textContent = `Complete! Total: ${totalDuration.toFixed(2)}s (${Math.round(totalDuration * 30)} frames)`;
+
+            // Generate TypeScript config
+            let tsConfig = `  // Estimated durations for each voiceover line (in frames at 30fps)\n`;
+            tsConfig += `  // Calculated from actual audio files\n`;
+            tsConfig += `  const estimatedDurations: Record<string, number> = {\n`;
+
+            for (const r of results) {
+                tsConfig += `    "${r.id}": ${r.frames},   // ~${(r.duration).toFixed(1)}s - ${r.file}\n`;
+            }
+
+            tsConfig += `  };`;
+
+            document.getElementById('output').textContent = tsConfig;
+        }
+
+        function copyToClipboard() {
+            const text = document.getElementById('output').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied to clipboard!');
+            });
+        }
+
+        processFiles();
+    </script>
+</body>
+</html>

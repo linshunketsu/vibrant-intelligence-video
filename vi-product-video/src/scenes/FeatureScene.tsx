@@ -226,9 +226,11 @@ const SingleScreenshot: React.FC<SingleScreenshotProps> = ({
         style={{
           transform: `scale(${scale})`,
           transformOrigin: `${offsetX}% ${offsetY}%`,
+          maxHeight: "100%",
+          width: "100%",
         }}
       >
-        <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true}>
+        <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true} autoHeight={true}>
           <img
             src={screenshots[0]}
             alt="Feature screenshot"
@@ -287,49 +289,39 @@ const CrossfadeScreenshots: React.FC<{ screenshots: string[] }> = ({ screenshots
   const roundedSecondOpacity = Math.round(secondOpacity * 1000) / 1000;
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true}>
-        <div style={{ width: "100%", position: "relative" }}>
-          {/* CRITICAL FIX: Use conditional rendering to prevent invisible elements from causing artifacts */}
-          {roundedFirstOpacity > 0.001 && (
-            <img
-              src={screenshots[0]}
-              alt="Feature screenshot 1"
-              style={{
-                width: "100%",
-                height: "auto",
-                display: "block",
-                opacity: roundedFirstOpacity,
-                position: roundedSecondOpacity > 0.001 ? "absolute" : "static",
-              }}
-            />
-          )}
-          {roundedSecondOpacity > 0.001 && (
-            <img
-              src={screenshots[1]}
-              alt="Feature screenshot 2"
-              style={{
-                width: "100%",
-                height: "auto",
-                display: "block",
-                opacity: roundedSecondOpacity,
-                position: "absolute",
-                top: 0,
-                left: 0,
-              }}
-            />
-          )}
-        </div>
-      </BrowserMockup>
-    </div>
+    <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true} autoHeight={true}>
+      <div style={{ width: "100%", position: "relative" }}>
+        {/* CRITICAL FIX: Use conditional rendering to prevent invisible elements from causing artifacts */}
+        {roundedFirstOpacity > 0.001 && (
+          <img
+            src={screenshots[0]}
+            alt="Feature screenshot 1"
+            style={{
+              width: "100%",
+              height: "auto",
+              display: "block",
+              opacity: roundedFirstOpacity,
+              position: roundedSecondOpacity > 0.001 ? "absolute" : "static",
+            }}
+          />
+        )}
+        {roundedSecondOpacity > 0.001 && (
+          <img
+            src={screenshots[1]}
+            alt="Feature screenshot 2"
+            style={{
+              width: "100%",
+              height: "auto",
+              display: "block",
+              opacity: roundedSecondOpacity,
+              position: "absolute",
+              top: 0,
+              left: 0,
+            }}
+          />
+        )}
+      </div>
+    </BrowserMockup>
   );
 };
 
