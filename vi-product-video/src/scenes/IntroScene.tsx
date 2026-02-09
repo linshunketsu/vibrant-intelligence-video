@@ -8,77 +8,77 @@ import introDashboard from "../assets/screenshots/intro-dashboard.png";
 
 /**
  * IntroScene - Opening sequence with logo, tagline, and dashboard flash
- * 0:00 - 0:15 (450 frames) - Shortened for snappier intro
+ * 0:00 - 0:23 (700 frames) - Extended for voiceover
  *
  * Timeline:
- * - 0-12: Background fades in (faster)
- * - 12-30: Logo icon fades in (120×120px, scale 0.9→1)
- * - 25-45: "Vibrant Intelligence" text fades in (overlaps logo)
- * - 40-60: Tagline slides up (overlaps title)
- * - 55-75: "13 Features" badge animates in (overlaps tagline)
- * - 75-120: Brief hold
- * - 120-180: Crossfade to dashboard screenshot (faster)
- * - 140-420: Voiceover plays (while dashboard is visible)
- * - 420-450: Transition out
+ * - 0-15: Background fades in
+ * - 15-40: Logo icon fades in (120×120px, scale 0.9→1)
+ * - 40-70: "Vibrant Intelligence" text fades in
+ * - 70-100: Tagline slides up
+ * - 100-130: "13 Features" badge animates in
+ * - 130-200: Hold
+ * - 200-400: Crossfade to dashboard screenshot
+ * - 220-660: Voiceover plays (while dashboard is visible)
+ * - 650-700: Transition out
  */
 export const IntroScene: React.FC = () => {
   const frame = useCurrentFrame();
 
-  // Background fade in (0-12, faster)
-  const bgOpacity = interpolate(frame, [0, 12], [0, 1], {
+  // Background fade in (0-15)
+  const bgOpacity = interpolate(frame, [0, 15], [0, 1], {
     extrapolateRight: "clamp",
   });
 
-  // Logo animation (12-30)
-  const logoOpacity = interpolate(frame, [12, 20], [0, 1], {
+  // Logo animation (15-40)
+  const logoOpacity = interpolate(frame, [15, 25], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const logoScale = interpolate(frame, [12, 30], [0.9, 1], {
+  const logoScale = interpolate(frame, [15, 40], [0.9, 1], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });
 
-  // Title text fade in (25-45, overlaps logo)
-  const titleOpacity = interpolate(frame, [25, 35], [0, 1], {
+  // Title text fade in (40-70)
+  const titleOpacity = interpolate(frame, [40, 55], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const titleScale = interpolate(frame, [25, 45], [0.95, 1], {
+  const titleScale = interpolate(frame, [40, 70], [0.95, 1], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });
 
-  // Tagline slide up (40-60, overlaps title)
-  const taglineOpacity = interpolate(frame, [40, 50], [0, 1], {
+  // Tagline slide up (70-100)
+  const taglineOpacity = interpolate(frame, [70, 85], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const taglineY = interpolate(frame, [40, 60], [20, 0], {
+  const taglineY = interpolate(frame, [70, 100], [20, 0], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });
 
-  // Badge animation (55-75, overlaps tagline)
-  const badgeOpacity = interpolate(frame, [55, 65], [0, 1], {
+  // Badge animation (100-130)
+  const badgeOpacity = interpolate(frame, [100, 115], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const badgeScale = interpolate(frame, [55, 75], [0.85, 1], {
+  const badgeScale = interpolate(frame, [100, 130], [0.85, 1], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });
 
-  // Dashboard crossfade (120-180, faster)
-  const brandingOpacity = interpolate(frame, [120, 150], [1, 0], {
+  // Dashboard crossfade (200-400)
+  const brandingOpacity = interpolate(frame, [200, 230], [1, 0], {
     extrapolateRight: "clamp",
   });
-  const dashboardOpacity = interpolate(frame, [120, 150], [0, 1], {
+  const dashboardOpacity = interpolate(frame, [200, 230], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const dashboardScale = interpolate(frame, [120, 170], [0.92, 1], {
+  const dashboardScale = interpolate(frame, [200, 250], [0.92, 1], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });
 
-  // Transition out (420-450)
-  const outroOpacity = interpolate(frame, [420, 450], [1, 0], {
+  // Transition out (650-700)
+  const outroOpacity = interpolate(frame, [650, 700], [1, 0], {
     extrapolateRight: "clamp",
   });
 

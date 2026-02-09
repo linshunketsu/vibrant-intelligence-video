@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Composition, Sequence, Audio, delayRender, continueRender, useCurrentFrame, interpolate, useVideoConfig, Easing } from "remotion";
+import { Composition, Sequence, Audio, delayRender, continueRender, useCurrentFrame, interpolate, useVideoConfig } from "remotion";
 import soundtrack from "./assets/screenshots/demo music/m4.mp3";
 import introOutroMusic from "./assets/screenshots/demo music/raspberrymusic-feel-good-upbeat-percussion-logo-388050.mp3";
 import { IntroScene } from "./scenes/IntroScene";
@@ -224,23 +224,22 @@ const MusicLoopVolume: React.FC<{
   loopDuration: number;
 }> = ({ src, fadeIn = false, fadeOut = false, fadeOutAtGlobalFrame, loopIndex, loopStartFrame, loopDuration }) => {
   const frame = useCurrentFrame();
-  const fadeInDuration = 90; // 3 seconds for smooth fade in (matches crossfade period)
-  const fadeOutDuration = 120; // 4 seconds for smooth fade out
+  const fadeInDuration = 60;
+  const fadeOutDuration = 90;
 
   // Calculate global frame for fade-out calculation
   const globalFrame = loopStartFrame + frame;
 
   let volume = 0.08;
 
-  // Only fade in on the first loop - using ease-in curve for natural swell
+  // Only fade in on the first loop
   if (fadeIn && loopIndex === 0 && frame < fadeInDuration) {
     volume = interpolate(frame, [0, fadeInDuration], [0, 0.08], {
-      easing: Easing.in(Easing.cubic), // Gentle ease-in for natural swell
       extrapolateRight: "clamp",
     });
   }
 
-  // Handle fade-out based on global frame - using ease-out curve
+  // Handle fade-out based on global frame
   if (fadeOut && fadeOutAtGlobalFrame !== undefined) {
     // Calculate when this loop should start fading out
     const fadeOutStartInThisLoop = fadeOutAtGlobalFrame - loopStartFrame;
@@ -248,11 +247,12 @@ const MusicLoopVolume: React.FC<{
     if (fadeOutStartInThisLoop >= 0 && fadeOutStartInThisLoop < loopDuration) {
       // This loop contains the fade-out point
       if (frame >= fadeOutStartInThisLoop) {
-        const fadeProgress = Math.min((frame - fadeOutStartInThisLoop) / fadeOutDuration, 1);
-        volume = interpolate(fadeProgress, [0, 1], [0.08, 0], {
-          easing: Easing.out(Easing.cubic), // Smooth ease-out for natural decay
-          extrapolateLeft: "clamp"
-        });
+        volume = interpolate(
+          frame,
+          [fadeOutStartInThisLoop, fadeOutStartInThisLoop + fadeOutDuration],
+          [0.08, 0],
+          { extrapolateLeft: "clamp" }
+        );
       }
     } else if (fadeOutStartInThisLoop < 0) {
       // This entire loop should be faded out (or partially)
@@ -266,32 +266,23 @@ const MusicLoopVolume: React.FC<{
 };
 
 /**
- * IntroMusic - Higher volume intro sting with smooth crossfade to main music
- *
- * Timeline (shortened intro - 15 seconds total):
- * - 0:00 - 0:03: Full volume intro music
- * - 0:03 - 0:06: Crossfade period (90 frames = 3 seconds)
- *   - Main music fades in from 0:03 to 0:06
- *   - Intro music fades out from 0:03.5 to 0:06 (staggered for smoother transition)
- *   - Using eased curves for professional crossfade
+ * IntroMusic - Higher volume intro sting
  */
 const IntroMusic: React.FC = () => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
-
-  // Crossfade timeline (shortened - 3 second crossfade)
-  const fadeOutStartFrame = 105;  // 0:03.5 - intro music starts fading
-  const fadeOutEndFrame = 180;    // 0:06 - intro music fully faded out
+  const fadeOutDuration = 60; // Longer fade out for smoother transition (2 seconds)
 
   let volume = 0.12;
 
-  // Smooth crossfade using ease-out curve for natural transition
-  if (frame >= fadeOutStartFrame) {
-    const fadeProgress = Math.min((frame - fadeOutStartFrame) / (fadeOutEndFrame - fadeOutStartFrame), 1);
-    // Use ease-out curve for natural decay (quick at first, then gentle)
-    volume = interpolate(fadeProgress, [0, 1], [0.12, 0], {
-      easing: Easing.out(Easing.cubic),
-    });
+  // Fade out at end
+  if (frame > durationInFrames - fadeOutDuration) {
+    volume = interpolate(
+      frame,
+      [durationInFrames - fadeOutDuration, durationInFrames],
+      [0.12, 0],
+      { extrapolateLeft: "clamp" }
+    );
   }
 
   return <Audio src={introOutroMusic} volume={volume} />;
@@ -302,21 +293,16 @@ const IntroMusic: React.FC = () => {
  *
  * The raspberrymusic file is ~14.5 seconds. We start from the 6-second mark
  * (180 frames @ 30fps) to get the energetic part of the track for the outro.
- *
- * Staggered crossfade with main music:
- * - Main music fades out: 8040-8160 (4 seconds)
- * - Outro music fades in: 8040-8100 (3 seconds, slight offset for overlap)
  */
 const OutroMusic: React.FC = () => {
   const frame = useCurrentFrame();
-  const fadeInDuration = 60; // 2 second fade in for smooth crossfade
+  const fadeInDuration = 45; // 1.5 second fade in for quicker crossfade
 
   let volume = 0.12;
 
-  // Fade in at start (crossfading with main music) - using ease-in curve
+  // Fade in at start (crossfading with main music)
   if (frame < fadeInDuration) {
     volume = interpolate(frame, [0, fadeInDuration], [0, 0.12], {
-      easing: Easing.in(Easing.cubic), // Gentle ease-in for natural swell
       extrapolateRight: "clamp",
     });
   }
@@ -329,16 +315,17 @@ const OutroMusic: React.FC = () => {
 /**
  * CrossfadeMusic - Handles smooth transitions between music tracks
  *
- * Timeline (shortened intro):
- * - 0:00 - 0:06: Intro music (logo animation, shortened)
- * - 0:03 - 0:06: Crossfade period (3 second overlap)
- * - 0:03 - 4:22: Main music (dashboard shows through features) - LOOPS 2x
- * - 4:19 - 4:33: Outro music (same raspberrymusic from 6s mark) - starts EARLY for crossfade
+ * Timeline:
+ * - 0:00 - 0:09: Intro music (logo animation)
+ * - 0:05 - 0:09: Crossfade period (2 second overlap)
+ * - 0:07 - 4:27: Main music (dashboard shows through features) - LOOPS 2x
+ * - 4:24 - 4:38: Outro music (same raspberrymusic from 6s mark) - starts EARLY for crossfade
  *
  * The main music track (m4.mp3) is ~150.7 seconds (4522 frames).
- * With 15s intro (instead of 23s), we need ~252 seconds (7560 frames) of main music.
+ * We need ~260 seconds (7800 frames), so we loop the track twice.
  *
  * Outro uses raspberrymusic starting from 6-second mark for smooth transition.
+ * Main music fades out starting frame 8040, outro starts at 8040 (during StackedCardsScene).
  */
 const CrossfadeMusic: React.FC = () => {
   // Audio file duration in frames (150.726 seconds * 30fps)
@@ -346,24 +333,24 @@ const CrossfadeMusic: React.FC = () => {
 
   return (
     <>
-      {/* INTRO music (0:00 - 0:06) - plays during logo animation, shorter duration */}
-      <Sequence from={0} durationInFrames={180}>
+      {/* INTRO music (0:00 - 0:09) - plays during logo animation, fades out over 2 seconds */}
+      <Sequence from={0} durationInFrames={270}>
         <IntroMusic />
       </Sequence>
 
-      {/* MAIN CONTENT music (0:03 - 4:22) - LOOPING main track to cover entire duration */}
+      {/* MAIN CONTENT music (0:05 - 4:27) - LOOPING main track to cover entire duration */}
       <LoopingMusicWithFade
         src={soundtrack}
         fadeIn={true}
         fadeOut={true}
-        fadeOutAtGlobalFrame={7740}
-        sequenceStartFrame={90}
-        totalDurationInFrames={7650}
+        fadeOutAtGlobalFrame={8040}
+        sequenceStartFrame={150}
+        totalDurationInFrames={7890}
         loopDurationInFrames={AUDIO_LOOP_DURATION}
       />
 
-      {/* OUTRO music (4:19 - 4:33) - starts EARLY during StackedCardsScene for smooth crossfade */}
-      <Sequence from={7740} durationInFrames={310}>
+      {/* OUTRO music (4:24 - 4:38) - starts EARLY during StackedCardsScene for smooth crossfade */}
+      <Sequence from={8040} durationInFrames={310}>
         <OutroMusic />
       </Sequence>
     </>

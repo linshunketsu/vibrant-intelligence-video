@@ -15,7 +15,6 @@ interface SceneTransitionProps {
   exitDuration?: number;
   breathDuration?: number; // Frames where only background is visible between scenes
   fastEntrance?: boolean; // For "One More Thing" rapid-fire features - faster entrance (~10 frames)
-  entranceDelay?: number; // Delay before entrance animation starts (frames)
 }
 
 /**
@@ -35,7 +34,6 @@ export const SceneTransition: React.FC<SceneTransitionProps> = ({
   exitDuration = timing.transition.fade, // 15 frames default
   breathDuration = 8, // 8 frames of just background between scenes
   fastEntrance = false,
-  entranceDelay = 0,
 }) => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
@@ -44,13 +42,12 @@ export const SceneTransition: React.FC<SceneTransitionProps> = ({
   const actualEnterDuration = fastEntrance ? 10 : enterDuration;
 
   // Calculate the "hold" period - when content is fully visible
-  const totalTransitionTime = entranceDelay + actualEnterDuration + breathDuration + exitDuration;
+  const totalTransitionTime = actualEnterDuration + breathDuration + exitDuration;
   const holdDuration = Math.max(0, durationInFrames - totalTransitionTime);
 
-  // ENTER: frames entranceDelay to entranceDelay + actualEnterDuration
-  const adjustedFrame = frame - entranceDelay;
+  // ENTER: frames 0 to actualEnterDuration
   const actualEnterProgress = interpolate(
-    Math.min(Math.max(adjustedFrame, 0), actualEnterDuration),
+    Math.min(frame, actualEnterDuration),
     [0, actualEnterDuration],
     [0, 1],
     {
@@ -76,10 +73,7 @@ export const SceneTransition: React.FC<SceneTransitionProps> = ({
   let translateY = 0;
   let showContent = true;
 
-  if (adjustedFrame < 0) {
-    // Before entrance delay - hide content
-    showContent = false;
-  } else if (adjustedFrame < actualEnterDuration) {
+  if (frame < actualEnterDuration) {
     // Entering
     opacity = actualEnterProgress;
     scale = interpolate(actualEnterProgress, [0, 1], [0.95, 1]);
