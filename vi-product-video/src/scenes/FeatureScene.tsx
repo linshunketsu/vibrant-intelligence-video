@@ -42,6 +42,7 @@ interface FeatureSceneProps {
   highlightZoom?: HighlightZoom;
   fullScreen?: boolean; // For Composer finale only
   fastEntrance?: boolean; // For "One More Thing" rapid-fire features - faster entrance (~10 frames)
+  entranceDelay?: number; // Delay before entrance animation starts (frames)
   slideDuration?: number; // Custom slide duration for carousel (in frames) - defaults to 75
 }
 
@@ -76,6 +77,7 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
   highlightZoom,
   fullScreen = false,
   fastEntrance = false,
+  entranceDelay = 0,
   slideDuration = 75, // Default slide duration for carousel
 }) => {
   const frame = useCurrentFrame();
@@ -146,7 +148,7 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
   };
 
   return (
-    <SceneTransition fastEntrance={fastEntrance}>
+    <SceneTransition fastEntrance={fastEntrance} entranceDelay={entranceDelay}>
       <AbsoluteFill
         style={{
           display: "flex",
