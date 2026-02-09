@@ -26,7 +26,7 @@ import { getAllVoiceoverTracks, SCENE_START_FRAMES, SCENE_DURATIONS, TOTAL_VIDEO
 
 /**
  * Vibrant Intelligence Product Video
- * Total: ~4:43 (8480 frames @ 30fps)
+ * Total: ~4:46 (8590 frames @ 30fps)
  *
  * Extended to accommodate actual voiceover durations.
  * Intro scene includes voiceover starting when dashboard appears.
@@ -49,9 +49,9 @@ import { getAllVoiceoverTracks, SCENE_START_FRAMES, SCENE_DURATIONS, TOTAL_VIDEO
  * FEATURE 12: 3:53 - 3:59 (180 frames, 6s) - Approval Center
  * TRANSITION: 3:59 - 4:00 (60 frames, 2s) - "Coming Soon"
  * FEATURE 13: 4:00 - 4:27 (780 frames, 26s) - Composer (Finale)
- * STACKED CARDS: 4:27 - 4:32 (150 frames, 5s) - "One Platform, Everything You Need" + outro voiceover
- * OUTRO: 4:32 - 4:48 (480 frames, 16s) - Logo only, no voiceover
- * TOTAL: 4:48 (8630 frames)
+ * STACKED CARDS: 4:27 - 4:30 (110 frames, 3.7s) - "One Platform, Everything You Need" + outro voiceover
+ * OUTRO: 4:30 - 4:46 (480 frames, 16s) - Logo only, no voiceover
+ * TOTAL: 4:46 (8590 frames)
  */
 
 // Screenshot imports - using actual files from assets/screenshots/
@@ -159,33 +159,107 @@ const SCREENSHOTS = {
 };
 
 /**
- * MusicWithFade - Audio with fade in/out using Remotion's native volume prop
+ * LoopingMusicWithFade - Audio that loops seamlessly with fade in/out
+ *
+ * The m4.mp3 file is ~150.7 seconds (4522 frames).
+ * We need to cover ~265 seconds (7940 frames), so we loop the track twice.
+ *
+ * Uses the absolute frame to calculate volume, and places multiple Audio elements
+ * at different offsets to create the looping effect.
  */
-const MusicWithFade: React.FC<{
+const LoopingMusicWithFade: React.FC<{
   src: string;
   fadeIn?: boolean;
   fadeOut?: boolean;
-}> = ({ src, fadeIn = false, fadeOut = false }) => {
+  fadeOutAtGlobalFrame?: number;
+  sequenceStartFrame: number;
+  totalDurationInFrames: number;
+  loopDurationInFrames: number;
+}> = ({ src, fadeIn = false, fadeOut = false, fadeOutAtGlobalFrame, sequenceStartFrame, totalDurationInFrames, loopDurationInFrames }) => {
+  // This component will be used OUTSIDE any Sequence that constrains it
+  // We need to use absolute positioning for Audio elements
+
+  // For volume calculation, we need to get the current frame in the global timeline
+  // But we can't use useCurrentFrame() effectively here without knowing context
+  // Instead, we'll use a simpler approach with fixed volume
+
+  const totalLoops = Math.ceil(totalDurationInFrames / loopDurationInFrames);
+
+  return (
+    <>
+      {Array.from({ length: totalLoops }).map((_, index) => {
+        const loopStartFrame = sequenceStartFrame + (index * loopDurationInFrames);
+        if (loopStartFrame >= sequenceStartFrame + totalDurationInFrames) return null;
+
+        const loopDuration = Math.min(loopDurationInFrames, sequenceStartFrame + totalDurationInFrames - loopStartFrame);
+
+        return (
+          <Sequence key={`loop-${index}`} from={loopStartFrame} durationInFrames={loopDuration}>
+            <MusicLoopVolume
+              src={src}
+              fadeIn={fadeIn && index === 0}
+              fadeOut={fadeOut}
+              fadeOutAtGlobalFrame={fadeOutAtGlobalFrame}
+              loopIndex={index}
+              loopStartFrame={loopStartFrame}
+              loopDuration={loopDuration}
+            />
+          </Sequence>
+        );
+      })}
+    </>
+  );
+};
+
+/**
+ * MusicLoopVolume - Handles volume for a single loop with fade in/out
+ */
+const MusicLoopVolume: React.FC<{
+  src: string;
+  fadeIn?: boolean;
+  fadeOut?: boolean;
+  fadeOutAtGlobalFrame?: number;
+  loopIndex: number;
+  loopStartFrame: number;
+  loopDuration: number;
+}> = ({ src, fadeIn = false, fadeOut = false, fadeOutAtGlobalFrame, loopIndex, loopStartFrame, loopDuration }) => {
   const frame = useCurrentFrame();
-  const { durationInFrames } = useVideoConfig();
-  const fadeInDuration = 60;  // 2 second fade for smoother transitions
-  const fadeOutDuration = 90; // 3 second fade out for smoother transition to outro
+  const fadeInDuration = 60;
+  const fadeOutDuration = 90;
+
+  // Calculate global frame for fade-out calculation
+  const globalFrame = loopStartFrame + frame;
 
   let volume = 0.08;
 
-  if (fadeIn && frame < fadeInDuration) {
+  // Only fade in on the first loop
+  if (fadeIn && loopIndex === 0 && frame < fadeInDuration) {
     volume = interpolate(frame, [0, fadeInDuration], [0, 0.08], {
       extrapolateRight: "clamp",
     });
   }
 
-  if (fadeOut && frame > durationInFrames - fadeOutDuration) {
-    volume = interpolate(
-      frame,
-      [durationInFrames - fadeOutDuration, durationInFrames],
-      [0.08, 0],
-      { extrapolateLeft: "clamp" }
-    );
+  // Handle fade-out based on global frame
+  if (fadeOut && fadeOutAtGlobalFrame !== undefined) {
+    // Calculate when this loop should start fading out
+    const fadeOutStartInThisLoop = fadeOutAtGlobalFrame - loopStartFrame;
+
+    if (fadeOutStartInThisLoop >= 0 && fadeOutStartInThisLoop < loopDuration) {
+      // This loop contains the fade-out point
+      if (frame >= fadeOutStartInThisLoop) {
+        volume = interpolate(
+          frame,
+          [fadeOutStartInThisLoop, fadeOutStartInThisLoop + fadeOutDuration],
+          [0.08, 0],
+          { extrapolateLeft: "clamp" }
+        );
+      }
+    } else if (fadeOutStartInThisLoop < 0) {
+      // This entire loop should be faded out (or partially)
+      // This shouldn't happen with correct timing, but handle it
+      volume = 0;
+    }
+    // If fadeOutStartInThisLoop >= loopDuration, this loop plays at full volume
   }
 
   return <Audio src={src} volume={volume} />;
@@ -237,13 +311,19 @@ const OutroMusic: React.FC = () => {
  * CrossfadeMusic - Handles smooth transitions between music tracks
  *
  * Timeline:
- * - 0:00 - 0:07: Intro music (logo animation)
+ * - 0:00 - 0:09: Intro music (logo animation)
  * - 0:05 - 0:09: Crossfade period (2 second overlap)
- * - 0:07 - 4:30: Main music (dashboard shows through features)
+ * - 0:07 - 4:30: Main music (dashboard shows through features) - LOOPS 2x
  * - 4:28 - 4:32: Crossfade period (2 second overlap)
- * - 4:30 - 4:48: Outro music
+ * - 4:30 - 4:46: Outro music
+ *
+ * The main music track (m4.mp3) is ~150.7 seconds (4522 frames).
+ * We need ~265 seconds (7940 frames), so we loop the track twice.
  */
 const CrossfadeMusic: React.FC = () => {
+  // Audio file duration in frames (150.726 seconds * 30fps)
+  const AUDIO_LOOP_DURATION = 4522;
+
   return (
     <>
       {/* INTRO music (0:00 - 0:09) - plays during logo animation, fades out over 2 seconds */}
@@ -251,13 +331,19 @@ const CrossfadeMusic: React.FC = () => {
         <IntroMusic />
       </Sequence>
 
-      {/* MAIN CONTENT music (0:05 - 4:30) - starts 2 seconds early for smooth crossfade, ends 2s before outro music starts */}
-      <Sequence from={150} durationInFrames={7620}>
-        <MusicWithFade src={soundtrack} fadeIn={true} fadeOut={true} />
-      </Sequence>
+      {/* MAIN CONTENT music (0:05 - 4:30) - LOOPING main track to cover entire duration */}
+      <LoopingMusicWithFade
+        src={soundtrack}
+        fadeIn={true}
+        fadeOut={true}
+        fadeOutAtGlobalFrame={8090}
+        sequenceStartFrame={150}
+        totalDurationInFrames={7940}
+        loopDurationInFrames={AUDIO_LOOP_DURATION}
+      />
 
-      {/* OUTRO music (4:30 - 4:48) - starts right when outro scene begins, matches logo slide */}
-      <Sequence from={8150} durationInFrames={480}>
+      {/* OUTRO music (4:28 - 4:46) - starts 2 seconds early for smooth crossfade */}
+      <Sequence from={8090} durationInFrames={500}>
         <OutroMusic />
       </Sequence>
     </>
@@ -290,8 +376,8 @@ export const Video: React.FC = () => {
       // Also preload the soundtrack (skip if Audio is not available)
       const audioPromise = new Promise<void>((resolve) => {
         try {
-          if (typeof Audio !== 'undefined') {
-            const audio = new Audio();
+          if (typeof window !== 'undefined' && typeof (window as any).Audio !== 'undefined') {
+            const audio = new (window as any).Audio();
             audio.oncanplaythrough = () => resolve();
             audio.onerror = () => resolve(); // Don't block on audio errors
             audio.src = soundtrack;
@@ -421,8 +507,8 @@ export const Video: React.FC = () => {
         />
       </Sequence>
 
-      {/* 4:18 - 4:23   STACKED CARDS: "One Platform, Everything You Need" (150 frames, 5s) */}
-      <Sequence from={SCENE_START_FRAMES.stackedCards} durationInFrames={150}>
+      {/* 4:18 - 4:22   STACKED CARDS: "One Platform, Everything You Need" (110 frames, 3.7s) */}
+      <Sequence from={SCENE_START_FRAMES.stackedCards} durationInFrames={110}>
         <StackedCardsScene />
       </Sequence>
 
