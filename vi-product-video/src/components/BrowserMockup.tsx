@@ -122,7 +122,7 @@ export const BrowserMockup: React.FC<BrowserMockupProps> = ({
           transform: `scale(${scale})`,
           transformOrigin: "top left",
           width: "100%",
-          height: "100%",
+          height: autoHeight ? "auto" : "100%",
         }}
       >
         <div
@@ -131,7 +131,7 @@ export const BrowserMockup: React.FC<BrowserMockupProps> = ({
             borderRadius,
             overflow: "hidden",
             boxShadow: richShadow,
-            height: "100%",
+            height: autoHeight ? "auto" : "100%",
             display: "flex",
             flexDirection: "column",
           }}
@@ -225,7 +225,7 @@ export const BrowserMockup: React.FC<BrowserMockupProps> = ({
         transform: `scale(${scale})`,
         transformOrigin: "top left",
         width: "100%",
-        height: "100%",
+        height: autoHeight ? "auto" : "100%",
       }}
     >
       {/* Browser Frame */}
@@ -235,7 +235,7 @@ export const BrowserMockup: React.FC<BrowserMockupProps> = ({
           borderRadius,
           overflow: "hidden",
           boxShadow: richShadow,
-          height: "100%",
+          height: autoHeight ? "auto" : "100%",
           display: "flex",
           flexDirection: "column",
         }}
