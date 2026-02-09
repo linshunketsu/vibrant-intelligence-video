@@ -127,7 +127,7 @@ export const Carousel: React.FC<CarouselProps> = ({
           }}
         >
           {items.map((item, index) => {
-            const relativePosition = getRelativePosition(index, currentSlideIndex, totalSlides, transitionProgress);
+            const relativePosition = getRelativePosition(index, currentSlideIndex, transitionProgress);
 
             // Skip rendering if slide is too far away
             if (relativePosition === null) return null;
@@ -249,18 +249,13 @@ export const Carousel: React.FC<CarouselProps> = ({
 function getRelativePosition(
   index: number,
   currentIndex: number,
-  totalSlides: number,
   transitionProgress: number
 ): { xPercent: number; scale: number; opacity: number; blur: number; zIndex: number; isCenter: boolean } | null {
-  // Handle wrap-around for circular navigation
-  const getWrappedIndex = (idx: number, max: number) => ((idx % max) + max) % max;
-
   // Distance from current index (can be negative)
-  let distance = index - currentIndex;
+  const distance = index - currentIndex;
 
-  // Handle wrap-around distances
-  if (distance > totalSlides / 2) distance -= totalSlides;
-  if (distance < -totalSlides / 2) distance += totalSlides;
+  // NOTE: NO wrap-around - linear progression only
+  // First slide has no left neighbor, last slide has no right neighbor
 
   // During transition, slides interpolate between their positions
   // If transitioning forward, currentIndex moves toward currentIndex + 1
@@ -272,10 +267,10 @@ function getRelativePosition(
     if (distance === 0) {
       // Center slide - exactly at 1.0 scale, no extra enlargement
       return { xPercent: 0, scale: 1.0, opacity: 1, blur: 0, zIndex: 10, isCenter: true };
-    } else if (distance === -1 || (distance === totalSlides - 1 && totalSlides > 2)) {
+    } else if (distance === -1) {
       // Previous slide (left side) - slightly scaled down
       return { xPercent: -100, scale: 0.85, opacity: 0.4, blur: 2, zIndex: 5, isCenter: false };
-    } else if (distance === 1 || (distance === -(totalSlides - 1) && totalSlides > 2)) {
+    } else if (distance === 1) {
       // Next slide (right side) - slightly scaled down
       return { xPercent: 100, scale: 0.85, opacity: 0.4, blur: 2, zIndex: 5, isCenter: false };
     }
@@ -302,7 +297,7 @@ function getRelativePosition(
       zIndex: 10,
       isCenter: easedProgress < 0.5, // Considered "center" during first half of transition
     };
-  } else if (distance === 1 || (distance === -(totalSlides - 1) && totalSlides > 2)) {
+  } else if (distance === 1) {
     // Next slide - moving from right to center
     // Scale: 0.85 → 0.95 → 1.0 (slight grow during entrance)
     return {
@@ -313,8 +308,9 @@ function getRelativePosition(
       zIndex: 10,
       isCenter: easedProgress >= 0.5, // Considered "center" during second half of transition
     };
-  } else if (distance === -1 || (distance === totalSlides - 1 && totalSlides > 2)) {
+  } else if (distance === -1) {
     // Previous slide - moving from left to further left (exiting)
+    // Only render if there's actually a previous slide (no wrap-around from first to last)
     const exitingX = interpolate(easedProgress, [0, 1], [-100, -140]);
     const exitingScale = interpolate(easedProgress, [0, 1], [0.85, 0.7]);
     const exitingOpacity = interpolate(easedProgress, [0, 1], [0.4, 0]);
@@ -327,7 +323,7 @@ function getRelativePosition(
       zIndex: 3,
       isCenter: false,
     };
-  } else if (distance === 2 || (distance === -(totalSlides - 2) && totalSlides > 3)) {
+  } else if (distance === 2) {
     // Two steps ahead - entering from right
     const enteringX = interpolate(easedProgress, [0, 1], [140, 100]);
     const enteringScale = interpolate(easedProgress, [0, 1], [0.7, 0.85]);
