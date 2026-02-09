@@ -18,7 +18,7 @@ import introDashboard from "../assets/screenshots/intro-dashboard.png";
  * - 55-75: "13 Features" badge animates in (overlaps tagline)
  * - 75-120: Brief hold
  * - 120-180: Crossfade to dashboard screenshot (faster)
- * - 140-420: Voiceover plays (while dashboard is visible)
+ * - 180-420: Dashboard stays visible while voiceover plays
  * - 420-450: Transition out
  */
 export const IntroScene: React.FC = () => {
@@ -65,11 +65,11 @@ export const IntroScene: React.FC = () => {
     extrapolateRight: "clamp",
   });
 
-  // Dashboard crossfade (120-180, faster)
-  const brandingOpacity = interpolate(frame, [120, 150], [1, 0], {
+  // Dashboard crossfade (120-180) - branding fades out, dashboard fades in
+  const brandingOpacity = interpolate(frame, [120, 180], [1, 0], {
     extrapolateRight: "clamp",
   });
-  const dashboardOpacity = interpolate(frame, [120, 150], [0, 1], {
+  const dashboardOpacity = interpolate(frame, [120, 180], [0, 1], {
     extrapolateRight: "clamp",
   });
   const dashboardScale = interpolate(frame, [120, 170], [0.92, 1], {
@@ -77,7 +77,7 @@ export const IntroScene: React.FC = () => {
     extrapolateRight: "clamp",
   });
 
-  // Transition out (420-450)
+  // Transition out (420-450) - entire scene fades out for feature1
   const outroOpacity = interpolate(frame, [420, 450], [1, 0], {
     extrapolateRight: "clamp",
   });

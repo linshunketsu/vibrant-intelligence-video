@@ -61,7 +61,6 @@ import composerDocument from "../../assets/screenshots/composer-document.png";
  * Screenshots: 3
  * Subtitle: "Unified Communication"
  * slideDuration: 125 frames (~4.2s) - synced to voiceover timing
- * entranceDelay: 133 frames - delays entrance until intro voiceover finishes
  */
 export const ChatMultichannelFeature: React.FC = () => (
   <FeatureScene
@@ -71,7 +70,6 @@ export const ChatMultichannelFeature: React.FC = () => (
     layout="carousel"
     durationInFrames={420}
     slideDuration={125}
-    entranceDelay={133} // Delay until intro VO ends (583 - 450 = 133)
   />
 );
 
