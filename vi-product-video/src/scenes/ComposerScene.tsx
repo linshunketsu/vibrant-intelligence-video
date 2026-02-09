@@ -153,13 +153,13 @@ export const ComposerScene: React.FC<ComposerSceneProps> = ({ screenshots }) => 
         Your AI Command Center
       </div>
 
-      {/* Cursor animation - simulate typing in composer input */}
+      {/* Cursor animation - simulate typing in composer input (starts on second slide) */}
       <AnimatedCursor
         startPos={{ x: 50, y: 70 }} // Start from center
         endPos={{ x: 40, y: 60 }} // Move to composer input area
-        startFrame={40}
+        startFrame={210} // Start after first slide (185 + 25 transition)
         moveDuration={25}
-        clickAtFrame={65}
+        clickAtFrame={235}
       />
     </AbsoluteFill>
   );

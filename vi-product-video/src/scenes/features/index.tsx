@@ -333,13 +333,6 @@ export const EncounterCollaborateFeature: React.FC = () => (
     layout="single"
     durationInFrames={150}
     fastEntrance={true} // Faster entrance for "One More Thing" rapid-fire section
-    highlightZoom={{
-      x: 80,              // Right side where collaboration avatars are
-      y: 15,              // Top right corner
-      preset: "snappy",   // Quick zoom for rapid-fire style
-      atFrame: 40,        // Start zoom early
-      holdDuration: 60,   // Hold for 2 seconds
-    }}
   />
 );
 
@@ -347,7 +340,6 @@ export const EncounterCollaborateFeature: React.FC = () => (
  * FEATURE 11: Encounter Note Sign (5s = 150 frames)
  * Layout: single — fast entrance, same rapid-fire style
  * Screenshots: 1
- * Cinematic Zoom: YES — zoom into the signature area
  */
 export const EncounterSignFeature: React.FC = () => (
   <FeatureSceneWithCinematicZoom
@@ -357,13 +349,6 @@ export const EncounterSignFeature: React.FC = () => (
     layout="single"
     durationInFrames={150}
     fastEntrance={true} // Faster entrance for "One More Thing" rapid-fire section
-    highlightZoom={{
-      x: 50,              // Center where signature is
-      y: 70,              // Bottom where the signature line is
-      preset: "snappy",
-      atFrame: 40,
-      holdDuration: 60,
-    }}
   />
 );
 

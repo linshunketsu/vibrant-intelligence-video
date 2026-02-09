@@ -256,7 +256,7 @@ const CinematicZoomContent: React.FC<CinematicZoomContentProps> = ({
 
   // For single layout - wrap the zoomed content in BrowserMockup OUTSIDE the zoom effect
   const ZoomedContent = () => (
-    <CinematicZoomHighlight {...zoomProps} scale={highlightZoom.scale || 2}>
+    <CinematicZoomHighlight {...zoomProps} scale={highlightZoom.scale || 2} showCursor={highlightZoom.showCursor ?? true}>
       <img
         src={screenshots[0]}
         alt="Feature screenshot"
