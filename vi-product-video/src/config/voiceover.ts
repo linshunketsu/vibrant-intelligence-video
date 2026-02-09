@@ -129,10 +129,10 @@ export const VOICEOVER_CONFIG: SceneVoiceover[] = [
     sceneId: "feature1",
     sceneName: "Chat + SMS + Email",
     lines: [
-      { id: "feature1-0", audio: feature1_0, text: "First up: unified communication.", startFrame: 20 },
-      { id: "feature1-1", audio: feature1_1, text: "Text messages, emails, and chat—all in one interface.", startFrame: 60 },
-      { id: "feature1-2", audio: feature1_2, text: "No more switching between apps.", startFrame: 140 },
-      { id: "feature1-3", audio: feature1_3, text: "Every interaction with a patient lives in one place, so your team always has the full picture.", startFrame: 180 },
+      { id: "feature1-0", audio: feature1_0, text: "First up: unified communication.", startFrame: 140 }, // Delayed to avoid overlap with intro-2
+      { id: "feature1-1", audio: feature1_1, text: "Text messages, emails, and chat—all in one interface.", startFrame: 0 }, // Calculated sequentially
+      { id: "feature1-2", audio: feature1_2, text: "No more switching between apps.", startFrame: 0 }, // Calculated sequentially
+      { id: "feature1-3", audio: feature1_3, text: "Every interaction with a patient lives in one place, so your team always has the full picture.", startFrame: 0 }, // Calculated sequentially
     ],
   },
 
