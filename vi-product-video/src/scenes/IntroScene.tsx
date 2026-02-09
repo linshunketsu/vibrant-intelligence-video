@@ -8,18 +8,12 @@ import introDashboard from "../assets/screenshots/intro-dashboard.png";
 
 /**
  * IntroScene - Opening sequence with logo, tagline, and dashboard flash
- * 0:00 - 0:15 (450 frames) - Shortened for snappier intro
+ * 0:00 - 0:15 (450 frames) - Logo animation starts at frame 435
  *
  * Timeline:
- * - 0-12: Background fades in (faster)
- * - 12-30: Logo icon fades in (120×120px, scale 0.9→1)
- * - 25-45: "Vibrant Intelligence" text fades in (overlaps logo)
- * - 40-60: Tagline slides up (overlaps title)
- * - 55-75: "13 Features" badge animates in (overlaps tagline)
- * - 75-120: Brief hold
- * - 120-180: Crossfade to dashboard screenshot (faster)
- * - 140-420: Voiceover plays (while dashboard is visible)
- * - 420-450: Transition out
+ * - 0-435: Just dotted background (dashboard is visible from other scene)
+ * - 435-447: Logo icon fades in (120×120px, scale 0.9→1)
+ * - 447-450: Brief logo show
  */
 export const IntroScene: React.FC = () => {
   const frame = useCurrentFrame();
@@ -29,58 +23,25 @@ export const IntroScene: React.FC = () => {
     extrapolateRight: "clamp",
   });
 
-  // Logo animation (12-30)
-  const logoOpacity = interpolate(frame, [12, 20], [0, 1], {
+  // Logo animation starts at frame 435
+  const logoStartFrame = 435;
+  const logoOpacity = interpolate(frame, [logoStartFrame, logoStartFrame + 8], [0, 1], {
     extrapolateRight: "clamp",
   });
-  const logoScale = interpolate(frame, [12, 30], [0.9, 1], {
+  const logoScale = interpolate(frame, [logoStartFrame, logoStartFrame + 12], [0.9, 1], {
     easing: Easing.bezier(...easing.material),
     extrapolateRight: "clamp",
   });
 
-  // Title text fade in (25-45, overlaps logo)
-  const titleOpacity = interpolate(frame, [25, 35], [0, 1], {
-    extrapolateRight: "clamp",
-  });
-  const titleScale = interpolate(frame, [25, 45], [0.95, 1], {
-    easing: Easing.bezier(...easing.material),
-    extrapolateRight: "clamp",
-  });
+  // Hide other branding elements - only logo shows
+  const titleOpacity = 0;
+  const taglineOpacity = 0;
+  const badgeOpacity = 0;
+  const brandingOpacity = logoOpacity;
 
-  // Tagline slide up (40-60, overlaps title)
-  const taglineOpacity = interpolate(frame, [40, 50], [0, 1], {
-    extrapolateRight: "clamp",
-  });
-  const taglineY = interpolate(frame, [40, 60], [20, 0], {
-    easing: Easing.bezier(...easing.material),
-    extrapolateRight: "clamp",
-  });
-
-  // Badge animation (55-75, overlaps tagline)
-  const badgeOpacity = interpolate(frame, [55, 65], [0, 1], {
-    extrapolateRight: "clamp",
-  });
-  const badgeScale = interpolate(frame, [55, 75], [0.85, 1], {
-    easing: Easing.bezier(...easing.material),
-    extrapolateRight: "clamp",
-  });
-
-  // Dashboard crossfade (120-180, faster)
-  const brandingOpacity = interpolate(frame, [120, 150], [1, 0], {
-    extrapolateRight: "clamp",
-  });
-  const dashboardOpacity = interpolate(frame, [120, 150], [0, 1], {
-    extrapolateRight: "clamp",
-  });
-  const dashboardScale = interpolate(frame, [120, 170], [0.92, 1], {
-    easing: Easing.bezier(...easing.material),
-    extrapolateRight: "clamp",
-  });
-
-  // Transition out (420-450)
-  const outroOpacity = interpolate(frame, [420, 450], [1, 0], {
-    extrapolateRight: "clamp",
-  });
+  // No dashboard or outro in IntroScene
+  const dashboardOpacity = 0;
+  const outroOpacity = 1;
 
   return (
     <AbsoluteFill style={{ backgroundColor: theme.colors.background }}>
@@ -96,8 +57,7 @@ export const IntroScene: React.FC = () => {
         />
       </AbsoluteFill>
 
-      <AbsoluteFill style={{ opacity: outroOpacity }}>
-        {/* Branding content (fades out at 200) */}
+      {/* Branding content - only logo, starts at frame 435 */}
         <AbsoluteFill
           style={{
             display: "flex",
@@ -125,11 +85,10 @@ export const IntroScene: React.FC = () => {
             />
           </div>
 
-          {/* Title */}
+          {/* Title - hidden */}
           <div
             style={{
               opacity: titleOpacity,
-              transform: `scale(${titleScale})`,
               fontSize: 80,
               fontWeight: 800,
               color: theme.colors.accent,
@@ -141,11 +100,10 @@ export const IntroScene: React.FC = () => {
             Vibrant Intelligence
           </div>
 
-          {/* Tagline */}
+          {/* Tagline - hidden */}
           <div
             style={{
               opacity: taglineOpacity,
-              transform: `translateY(${taglineY}px)`,
               fontSize: 28,
               fontWeight: 500,
               color: theme.colors.textSecondary,
@@ -157,11 +115,10 @@ export const IntroScene: React.FC = () => {
             AI-Powered, Lab-Integrated EHR Platform
           </div>
 
-          {/* Badge */}
+          {/* Badge - hidden */}
           <div
             style={{
               opacity: badgeOpacity,
-              transform: `scale(${badgeScale})`,
               marginTop: 40,
               padding: "10px 24px",
               backgroundColor: theme.colors.accent,
@@ -175,38 +132,6 @@ export const IntroScene: React.FC = () => {
             13 Features
           </div>
         </AbsoluteFill>
-
-        {/* Dashboard preview (fades in at 200) */}
-        <AbsoluteFill
-          style={{
-            opacity: dashboardOpacity,
-            padding: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <div
-            style={{
-              width: "95%",
-              height: "90%",
-              transform: `scale(${dashboardScale})`,
-            }}
-          >
-            <BrowserMockup url="app.vibrantintelligence.com" minimal={true}>
-              <img
-                src={introDashboard}
-                alt="Vibrant Intelligence Dashboard"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
-            </BrowserMockup>
-          </div>
-        </AbsoluteFill>
-      </AbsoluteFill>
     </AbsoluteFill>
   );
 };
