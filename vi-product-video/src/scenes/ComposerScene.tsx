@@ -31,6 +31,57 @@ export const ComposerScene: React.FC<ComposerSceneProps> = ({ screenshots }) => 
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
 
+  // Cinematic zoom for first slide (frames 0-185) - zoom to far right
+  const firstSlideEnd = 185;
+  const zoomStartFrame = 30; // Start zoom after content fades in
+  const zoomDuration = 40; // Zoom in over 40 frames
+  const zoomHoldDuration = 80; // Hold at max zoom
+  const zoomEndFrame = zoomStartFrame + zoomDuration + zoomHoldDuration;
+
+  // Calculate zoom progress for first slide
+  let zoomScale = 1;
+  let zoomOffsetX = 0;
+  let zoomOffsetY = 0;
+
+  if (frame < firstSlideEnd) {
+    if (frame >= zoomStartFrame && frame < zoomStartFrame + zoomDuration) {
+      // Zooming in
+      const zoomProgress = (frame - zoomStartFrame) / zoomDuration;
+      const easedProgress = interpolate(zoomProgress, [0, 1], [0, 1], {
+        easing: Easing.bezier(...easing.material),
+      });
+      zoomScale = interpolate(easedProgress, [0, 1], [1, 2.2]);
+
+      // Shift toward far right (x: 90, y: 50)
+      const targetX = 90;
+      const targetY = 50;
+      zoomOffsetX = interpolate(easedProgress, [0, 1], [0, (50 - targetX) * (zoomScale - 1) / zoomScale]);
+      zoomOffsetY = interpolate(easedProgress, [0, 1], [0, (50 - targetY) * (zoomScale - 1) / zoomScale]);
+    } else if (frame >= zoomStartFrame + zoomDuration && frame < zoomEndFrame) {
+      // Holding at max zoom
+      zoomScale = 2.2;
+      const targetX = 90;
+      const targetY = 50;
+      zoomOffsetX = (50 - targetX) * (zoomScale - 1) / zoomScale;
+      zoomOffsetY = (50 - targetY) * (zoomScale - 1) / zoomScale;
+    } else if (frame >= zoomEndFrame) {
+      // Zooming out before slide transition
+      const zoomOutDuration = firstSlideEnd - zoomEndFrame;
+      const zoomOutProgress = Math.min((frame - zoomEndFrame) / zoomOutDuration, 1);
+      const easedOutProgress = interpolate(zoomOutProgress, [0, 1], [0, 1], {
+        easing: Easing.bezier(...easing.material),
+      });
+
+      const startScale = 2.2;
+      const startOffsetX = (50 - 90) * (startScale - 1) / startScale;
+      const startOffsetY = (50 - 50) * (startScale - 1) / startScale;
+
+      zoomScale = interpolate(easedOutProgress, [0, 1], [startScale, 1]);
+      zoomOffsetX = interpolate(easedOutProgress, [0, 1], [startOffsetX, 0]);
+      zoomOffsetY = interpolate(easedOutProgress, [0, 1], [startOffsetY, 0]);
+    }
+  }
+
   // Fade in for screenshots
   const opacity = interpolate(
     Math.min(frame, 25),
@@ -91,13 +142,23 @@ export const ComposerScene: React.FC<ComposerSceneProps> = ({ screenshots }) => 
           opacity,
         }}
       >
-        <Carousel
-          items={screenshots.map((src) => ({ image: src }))}
-          slideDuration={185} // ~6.2 seconds per slide (780 / 4 ≈ 195, minus transitions)
-          transitionDuration={25} // Slower transitions for dramatic pacing (25 instead of 20)
-          centerCardWidth={95} // Nearly full-width for composer finale
-          sidePeekWidth={5}
-        />
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            transform: `scale(${zoomScale}) translate(${zoomOffsetX}%, ${zoomOffsetY}%)`,
+            transformOrigin: "center",
+            transition: "none",
+          }}
+        >
+          <Carousel
+            items={screenshots.map((src) => ({ image: src }))}
+            slideDuration={185} // ~6.2 seconds per slide (780 / 4 ≈ 195, minus transitions)
+            transitionDuration={25} // Slower transitions for dramatic pacing (25 instead of 20)
+            centerCardWidth={95} // Nearly full-width for composer finale
+            sidePeekWidth={5}
+          />
+        </div>
       </div>
 
       {/* "Coming Soon" badge - top right with pulse animation */}
@@ -152,15 +213,6 @@ export const ComposerScene: React.FC<ComposerSceneProps> = ({ screenshots }) => 
       >
         Your AI Command Center
       </div>
-
-      {/* Cursor animation - simulate typing in composer input (starts on second slide) */}
-      <AnimatedCursor
-        startPos={{ x: 50, y: 70 }} // Start from center
-        endPos={{ x: 40, y: 60 }} // Move to composer input area
-        startFrame={210} // Start after first slide (185 + 25 transition)
-        moveDuration={25}
-        clickAtFrame={235}
-      />
     </AbsoluteFill>
   );
 };
