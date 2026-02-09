@@ -113,13 +113,13 @@ export interface SceneVoiceover {
  */
 export const VOICEOVER_CONFIG: SceneVoiceover[] = [
   // INTRO - Logo animation + Dashboard flash (450 frames = 15s)
-  // Voiceover starts when dashboard appears at frame 200
+  // Voiceover starts when dashboard appears at frame 140
   {
     sceneId: "intro",
     sceneName: "INTRO",
     lines: [
-      { id: "intro-0", audio: intro_0, text: "Running a modern practice means juggling patient care, communication, scheduling, and documentation—all at once.", startFrame: 220 },
-      { id: "intro-1", audio: intro_1, text: "What if your EHR actually helped instead of getting in the way?", startFrame: 420 },
+      { id: "intro-0", audio: intro_0, text: "Running a modern practice means juggling patient care, communication, scheduling, and documentation—all at once.", startFrame: 140 },
+      { id: "intro-1", audio: intro_1, text: "What if your EHR actually helped instead of getting in the way?", startFrame: 0 }, // Will be calculated sequentially
       { id: "intro-2", audio: intro_2, text: "Meet Vibrant Intelligence: an AI-powered platform built for how clinics actually work.", startFrame: 0 }, // Will be calculated sequentially
     ],
   },
@@ -335,26 +335,26 @@ export function getVoiceoverForScene(sceneId: string): SceneVoiceover | undefine
 export function getAllVoiceoverTracks(): Array<{ audio: string; startFrame: number; durationInFrames: number }> {
   const tracks: Array<{ audio: string; startFrame: number; durationInFrames: number }> = [];
 
-  // NEW Scene start frames - extended to accommodate actual voiceover durations
+  // NEW Scene start frames - shortened intro (450 frames instead of 700)
   const sceneStartFrames: Record<string, number> = {
-    intro: 0,          // 0:00 (700 frames - extended for voiceover)
-    feature1: 700,     // 0:23 (420 frames)
-    feature2: 1120,    // 0:37 (660 frames)
-    feature3: 1780,    // 0:59 (660 frames)
-    feature4: 2440,    // 1:21 (400 frames)
-    feature5: 2840,    // 1:35 (500 frames)
-    feature6: 3340,    // 1:51 (750 frames)
-    feature7: 4090,    // 2:16 (1110 frames)
-    feature8: 5200,    // 2:53 (620 frames)
-    feature9: 5820,    // 3:14 (740 frames)
-    transition1: 6560, // 3:39 (120 frames)
-    feature10: 6680,   // 3:43 (150 frames)
-    feature11: 6830,   // 3:48 (150 frames)
-    feature12: 6980,   // 3:53 (180 frames)
-    transition2: 7160, // 3:59 (60 frames)
-    feature13: 7220,   // 4:00 (780 frames)
-    stackedCards: 8000, // 4:27 (110 frames) - "One Platform, Everything You Need"
-    outro: 8110,        // 4:30 (240 frames, 8s) - Logo only, no voiceover
+    intro: 0,          // 0:00 (450 frames - shortened intro)
+    feature1: 450,     // 0:15 (420 frames)
+    feature2: 870,     // 0:29 (660 frames)
+    feature3: 1530,    // 0:51 (660 frames)
+    feature4: 2190,    // 1:13 (400 frames)
+    feature5: 2590,    // 1:26 (500 frames)
+    feature6: 3090,    // 1:43 (750 frames)
+    feature7: 3840,    // 2:08 (1110 frames)
+    feature8: 4950,    // 2:45 (620 frames)
+    feature9: 5570,    // 3:05 (740 frames)
+    transition1: 6310, // 3:30 (120 frames)
+    feature10: 6430,   // 3:34 (150 frames)
+    feature11: 6580,   // 3:39 (150 frames)
+    feature12: 6730,   // 3:44 (180 frames)
+    transition2: 6910, // 3:50 (60 frames)
+    feature13: 6970,   // 3:52 (780 frames)
+    stackedCards: 7750, // 4:18 (110 frames) - "One Platform, Everything You Need"
+    outro: 7860,        // 4:22 (240 frames, 8s) - Logo only, no voiceover
   };
 
   // Actual durations for each voiceover line (in frames at 30fps)
@@ -445,31 +445,31 @@ export function getAllVoiceoverTracks(): Array<{ audio: string; startFrame: numb
  * Export the new scene start frames for use in Video.tsx
  */
 export const SCENE_START_FRAMES: Record<string, number> = {
-  intro: 0,          // 0:00 (700 frames - extended for voiceover)
-  feature1: 700,     // 0:23 (420 frames)
-  feature2: 1120,    // 0:37 (660 frames)
-  feature3: 1780,    // 0:59 (660 frames)
-  feature4: 2440,    // 1:21 (400 frames)
-  feature5: 2840,    // 1:35 (500 frames)
-  feature6: 3340,    // 1:51 (750 frames)
-  feature7: 4090,    // 2:16 (1110 frames)
-  feature8: 5200,    // 2:53 (620 frames)
-  feature9: 5820,    // 3:14 (740 frames)
-  transition1: 6560, // 3:39 (120 frames)
-  feature10: 6680,   // 3:43 (150 frames)
-  feature11: 6830,   // 3:48 (150 frames)
-  feature12: 6980,   // 3:53 (180 frames)
-  transition2: 7160, // 3:59 (60 frames)
-  feature13: 7220,   // 4:00 (780 frames)
-  stackedCards: 8000, // 4:27 (110 frames) - "One Platform, Everything You Need" with voiceover
-  outro: 8110,        // 4:30 (240 frames, 8s) - Logo only, no voiceover
+  intro: 0,          // 0:00 (450 frames - shortened intro)
+  feature1: 450,     // 0:15 (420 frames)
+  feature2: 870,     // 0:29 (660 frames)
+  feature3: 1530,    // 0:51 (660 frames)
+  feature4: 2190,    // 1:13 (400 frames)
+  feature5: 2590,    // 1:26 (500 frames)
+  feature6: 3090,    // 1:43 (750 frames)
+  feature7: 3840,    // 2:08 (1110 frames)
+  feature8: 4950,    // 2:45 (620 frames)
+  feature9: 5570,    // 3:05 (740 frames)
+  transition1: 6310, // 3:30 (120 frames)
+  feature10: 6430,   // 3:34 (150 frames)
+  feature11: 6580,   // 3:39 (150 frames)
+  feature12: 6730,   // 3:44 (180 frames)
+  transition2: 6910, // 3:50 (60 frames)
+  feature13: 6970,   // 3:52 (780 frames)
+  stackedCards: 7750, // 4:18 (110 frames) - "One Platform, Everything You Need" with voiceover
+  outro: 7860,        // 4:22 (240 frames, 8s) - Logo only, no voiceover
 };
 
 /**
  * Export the new scene durations for use in Video.tsx
  */
 export const SCENE_DURATIONS: Record<string, number> = {
-  intro: 700,        // 23.3s - extended for voiceover
+  intro: 450,        // 15s - shortened intro
   feature1: 420,     // 14s
   feature2: 660,     // 22s
   feature3: 660,     // 22s
@@ -491,4 +491,4 @@ export const SCENE_DURATIONS: Record<string, number> = {
 /**
  * Total video duration in frames
  */
-export const TOTAL_VIDEO_FRAMES = 8350; // ~4:38 at 30fps (110 frames for StackedCardsScene, 240 frames for Outro)
+export const TOTAL_VIDEO_FRAMES = 8100; // ~4:30 at 30fps (shortened by 250 frames)
