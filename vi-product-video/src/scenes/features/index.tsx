@@ -283,6 +283,7 @@ export const FormBuilderFeature: React.FC = () => (
  * Screenshots: 3
  * Subtitle: "Your Command Center"
  * Cinematic Zoom: YES — zoom into Ask AI button on last slide
+ * Cursor: YES — cursor moves from far right to left across the Ask AI button
  * slideDuration: 240 frames (~8s) - synced to voiceover timing
  */
 export const MyPracticeFeature: React.FC = () => (
@@ -294,11 +295,20 @@ export const MyPracticeFeature: React.FC = () => (
     durationInFrames={740}
     slideDuration={240}
     highlightZoom={{
-      x: 85,              // Far right side where Ask AI button is
-      y: 80,              // Bottom right corner
+      x: 65,              // Moved left from 85 - still on the right side but more centered
+      y: 80,              // Bottom right corner where Ask AI button is
       preset: "subtle",
       atFrame: 500,       // Start zoom on third/last screenshot (240 + 240 + 20 = ~500)
       holdDuration: 120,  // Hold for 4 seconds
+      showCursor: true,    // Enable cursor animation
+      cursorStartOffset: { x: 95, y: 80 },  // Cursor starts at far right
+    }}
+    showCursor={{
+      startPos: { x: 85, y: 75 },   // Start at right side
+      endPos: { x: 25, y: 75 },      // Move far left to point at Ask AI button
+      startFrame: 520,               // Start cursor movement after zoom begins
+      moveDuration: 40,              // Smooth movement across
+      clickAtFrame: 555,             // Click on Ask AI button
     }}
   />
 );
