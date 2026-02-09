@@ -207,9 +207,10 @@ const CinematicZoomContent: React.FC<CinematicZoomContentProps> = ({
     showSpotlight: highlightZoom.showSpotlight,
   };
 
-  // For carousel layout - wrap the zoomed content in BrowserMockup OUTSIDE the zoom effect
+  // For carousel layout - Carousel's SlideCard already has browser chrome
+  // Don't wrap in additional BrowserMockup to avoid duplicate chrome
   if (layout === "carousel" && screenshots.length >= 2) {
-    const ZoomedContent = () => (
+    return (
       <CinematicZoomHighlight {...zoomProps} scale={highlightZoom.scale || 2}>
         <Carousel
           items={screenshots.map((src) => ({ image: src }))}
@@ -217,14 +218,6 @@ const CinematicZoomContent: React.FC<CinematicZoomContentProps> = ({
           transitionDuration={18}
         />
       </CinematicZoomHighlight>
-    );
-
-    return (
-      <BrowserMockup scale={1} shadowOnEntrance={true} minimal={true}>
-        <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
-          <ZoomedContent />
-        </div>
-      </BrowserMockup>
     );
   }
 

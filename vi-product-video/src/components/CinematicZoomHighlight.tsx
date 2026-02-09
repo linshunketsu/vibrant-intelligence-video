@@ -81,23 +81,47 @@ export const CinematicZoomHighlight: React.FC<CinematicZoomProps> = ({
   // Cursor animation phases
   const cursorProgress = calculateCursorProgress(frame, atFrame, zoomDuration, holdDuration, exitDuration);
 
-  // CRITICAL FIX: Prevent flickering in rendered video by ALWAYS using consistent transform-origin
-  // The abrupt switch between "50% 50%" and target position causes rendering artifacts during
-  // parallel video rendering. Solution: Always use the target origin, but adjust with translate
-  // to keep the content centered when not zooming.
-  // This ensures frame-to-frame consistency across the entire animation.
-  const transformOrigin = `${target.x}% ${target.y}%`;
+  // EDGE FIX: Calculate safe bounds to prevent blank space when zooming near edges
+  // When target is too close to an edge, we need to adjust the zoom behavior
+  // to keep the target visible while avoiding empty space.
+  // Safe zone keeps at least (100/scale)% margin from edges
+  const minSafeY = 100 / (scale * 2); // Need at least this much margin from bottom
+  const maxSafeY = 100 - (100 / (scale * 2)); // Need at least this much margin from top
+
+  // Calculate adjusted target for transform origin to prevent blank space
+  let adjustedTargetY = target.y;
+  let verticalShift = 0;
+
+  if (target.y > maxSafeY) {
+    // Target is too close to bottom - limit the origin and add shift
+    adjustedTargetY = maxSafeY;
+    // Calculate shift to keep target at visually correct position
+    const shiftAmount = target.y - maxSafeY;
+    verticalShift = shiftAmount * (scaleValue - 1) * 0.8; // 0.8 to compensate partially
+  } else if (target.y < minSafeY) {
+    // Target is too close to top - limit the origin and add shift
+    adjustedTargetY = minSafeY;
+    const shiftAmount = minSafeY - target.y;
+    verticalShift = -shiftAmount * (scaleValue - 1) * 0.8;
+  }
+
+  // Create adjusted target for cursor positioning (cursor should point to adjusted position)
+  const adjustedTarget = { x: target.x, y: adjustedTargetY };
+
+  // CRITICAL: Use adjusted transform origin to prevent blank space
+  // This is the key fix - we change where the zoom originates from
+  const transformOrigin = `${target.x}% ${adjustedTargetY}%`;
 
   // Calculate a translation offset that counteracts the offset from non-center transform-origin
   // When scale is 1, we need to offset by (50 - target) to keep content centered
   // When scale > 1, we reduce this offset as the zoom naturally shifts toward the target
   const offsetWhenNotZoomingX = (50 - target.x) * (scaleValue - 1);
-  const offsetWhenNotZoomingY = (50 - target.y) * (scaleValue - 1);
+  const offsetWhenNotZoomingY = (50 - adjustedTargetY) * (scaleValue - 1);
 
   // Apply the offset that counteracts the non-center origin
   // This keeps content visually centered when scale=1, then shifts toward target during zoom
   const translateOffsetX = offsetWhenNotZoomingX;
-  const translateOffsetY = offsetWhenNotZoomingY;
+  const translateOffsetY = offsetWhenNotZoomingY + verticalShift;
 
   return (
     <AbsoluteFill style={{ overflow: "visible" }}>
@@ -113,10 +137,10 @@ export const CinematicZoomHighlight: React.FC<CinematicZoomProps> = ({
         {children}
       </div>
 
-      {/* Animated cursor */}
+      {/* Animated cursor - use adjusted target for proper alignment */}
       {showCursor && (
         <ZoomCursor
-          target={target}
+          target={adjustedTarget}
           startOffset={cursorStartOffset}
           progress={cursorProgress}
           atFrame={atFrame}
@@ -125,10 +149,10 @@ export const CinematicZoomHighlight: React.FC<CinematicZoomProps> = ({
         />
       )}
 
-      {/* Optional spotlight glow */}
+      {/* Optional spotlight glow - use adjusted target */}
       {showSpotlight && (
         <SpotlightGlow
-          target={target}
+          target={adjustedTarget}
           progress={cursorProgress}
           color={spotlightColor}
         />
